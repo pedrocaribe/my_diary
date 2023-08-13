@@ -18,7 +18,7 @@ def main_window(root, acc=None):
     # Force main window to open in center of screen
     root.wm_attributes('-alpha', 0)  # Hide window to avoid flicking screen while calculating center
 
-    # Window sizes
+    # Window size
     w = 1024
     h = 768
 
@@ -43,7 +43,7 @@ def main_window(root, acc=None):
                "entry TEXT, "
                "date DATE);")
 
-    # Create Menu
+    # Create Window Menu
     menubar = Menu(root)
     root.config(menu=menubar)
     m_help = Menu(menubar, tearoff=0)

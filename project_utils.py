@@ -55,11 +55,11 @@ def print_save(command, db_entry):
         raise ValueError("Invalid Command")
 
 
-def multi(root: Tk, cal: Calendar, r_date: Label, lb: Listbox, db, acc: str, text_box: Text):
+def multi(root: Tk, cal: Calendar, r_field: Label, lb: Listbox, db, acc: str, text_box: Text):
 
     # Variable assignment for readability
     selected_date = cal.get_date()
-    r_date.config(text=f"Selected Date is: {selected_date}")
+    r_field.config(text=f"Selected Date is: {selected_date}")
 
     # Clear entries from Listbox and allow single selection
     lb.delete(0, tkinter.END)
@@ -73,7 +73,7 @@ def multi(root: Tk, cal: Calendar, r_date: Label, lb: Listbox, db, acc: str, tex
                          "WHERE accounts.account = ? "
                          "AND entries.date = ?", (acc, selected_date,)).fetchall()
 
-    # Add entries to Listbox and create a dict of entries
+    # Add entries to Listbox and create a list of entries
     entries_list = []
     for count, entry in list(enumerate(entries)):
         entry_temp = Entries(count, entry[0], entry[1], entry[2])
@@ -81,13 +81,13 @@ def multi(root: Tk, cal: Calendar, r_date: Label, lb: Listbox, db, acc: str, tex
         lb.insert(entry_temp.count_id, entry_temp.entry)
 
     def selected(event):
-        sel_index = lb.curselection()  # Selected index
+        sel_index = lb.curselection()  # User selected entry's index
+
         # Find object in list that has attribute count_id == selected index
         sel_entry = next(x for x in entries_list if x.count_id == sel_index[0])
-        text = text_box.get("1.0", END)  # Actual text within text box
+        text = text_box.get("1.0", END)  # Fetch text within text box
         if len(text) > 1:
-            print(type(text))
-            print(text)
+
             popup = Toplevel()
             popup.grab_set()
             popup.attributes("-topmost", "true")
