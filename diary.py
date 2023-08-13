@@ -217,11 +217,15 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
             l_return.configure(text="Incorrect Password")
 
 
-def create_login(db, l_back: Label, b_reg: ttk.Button):
+def create_login(db, l_back_window: Label, b_reg: ttk.Button):
+
+    # Create new window for registration fields
     w_reg = Toplevel()
-    w_reg.grab_set()
+    w_reg.grab_set()  # Disable windows in background
     w_reg.configure(pady=10, padx=10)
     w_reg.resizable(False, False)
+
+    # Create fields and variables for fetching data inputted from user
     Label(w_reg, text="First Name:").grid(column=0, row=1)
     Label(w_reg, text="Last Name:").grid(column=0, row=2)
     Label(w_reg, text="Account:").grid(column=0, row=3)
@@ -243,20 +247,24 @@ def create_login(db, l_back: Label, b_reg: ttk.Button):
     f_new = ttk.Frame(w_reg)
     f_new.grid(column=0, row=6, columnspan=3)
 
+    # Definition of function for registration process
     def register():
 
-        parent = w_reg
+        parent = w_reg  # reassigned variable name for easier understanding within scope
         first = first_str.get()
         last = last_str.get()
         acc = acc_str.get()
         passwd = pass_str.get()
         conf_passwd = pass_conf_str.get()
 
+        # Check if user provided already exists in DB
         check = db.execute("SELECT * FROM accounts WHERE account = ?", (acc,)).fetchone()
 
+        # Create return label for posterior checks
         l_register = Label(parent, text="", anchor="center")
         l_register.grid(column=0, row=7, columnspan=4, sticky="nsew")
 
+        # Diverse checks
         if check:
             l_register.configure(text="Account already exists")
         elif not acc:
@@ -267,6 +275,7 @@ def create_login(db, l_back: Label, b_reg: ttk.Button):
         if passwd != conf_passwd:
             l_register.configure(text="Passwords do Not match")
 
+        # If all checks passed, register user after encrypting password by committing to DB
         else:
             key = Fernet.generate_key()
             fernet = Fernet(key)
@@ -281,10 +290,12 @@ def create_login(db, l_back: Label, b_reg: ttk.Button):
 
             db.commit()
 
-            l_back.configure(text="Registered Successfully")
+            # Return to user and disable Register button in background window
+            l_back_window.configure(text="Registered Successfully")
             b_reg.configure(state="disabled")
             parent.destroy()
 
+    # Submit and Cancel buttons
     ttk.Button(f_new, text="Register", command=register).grid(column=0, row=0, padx=5, pady=(10, 0))
     ttk.Button(f_new, text=" Cancel", command=w_reg.destroy).grid(column=1, row=0, padx=5, pady=(10, 0))
 
