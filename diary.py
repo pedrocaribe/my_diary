@@ -186,37 +186,38 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
     # Check if user provided already exists in DB
     check = cur.execute("SELECT * FROM accounts WHERE account = ?", (acc,)).fetchone()
 
+    # Create return label for posterior checks
     l_return = ttk.Label(parent, text="", anchor="center")
     l_return.grid(column=0, row=4, columnspan=4, sticky="nsew")
-    # If user not registered, prompt to register
+
+    # Login Checks
     if not acc:
-        l_return.configure(text="Account cannot be blank")
+        l_return.configure(text="Account cannot be blank")  # If user doesn't insert account name
     elif not check:
-        l_return.configure(text="Invalid account, please register")
-        b_register = ttk.Button(parent, text="Register", command=lambda: create_login(db))
+        l_return.configure(text="Invalid account, please register")  # If account not registered
+        b_register = ttk.Button(parent, text="Register", command=lambda: create_login(db, l_return, b_register))
         b_register.grid(column=0, row=3, pady=(10, 0))
 
     # If user is already registered, decrypt password provided with stored hash key and confirm login information
     else:
-        key = check[5]
         hashed_pass = check[4]
+        key = check[5]
         fernet = Fernet(key)
         unhashed_pass = fernet.decrypt(hashed_pass).decode()
+
+        # Compare password provided with decrypted password
         if unhashed_pass == passwd:
             l_return.configure(text="Login Successful")
 
             # If successful login, destroy toplevel window and show main
             w_tl.destroy()
-            # After successful login, show main window
             main_window(w_root, acc)
             w_root.deiconify()
-            # main_window(root, "teste")
-
         else:
             l_return.configure(text="Incorrect Password")
 
 
-def create_login(db):
+def create_login(db, l_back: Label, b_reg: ttk.Button):
     w_reg = Toplevel()
     w_reg.grab_set()
     w_reg.configure(pady=10, padx=10)
@@ -280,7 +281,8 @@ def create_login(db):
 
             db.commit()
 
-            l_register.configure(text="Registered Successfully")
+            l_back.configure(text="Registered Successfully")
+            b_reg.configure(state="disabled")
             parent.destroy()
 
     ttk.Button(f_new, text="Register", command=register).grid(column=0, row=0, padx=5, pady=(10, 0))

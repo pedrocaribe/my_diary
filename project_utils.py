@@ -6,7 +6,7 @@ from tkinter import ttk
 from tkcalendar import Calendar
 import sqlite3
 from datetime import date, datetime
-from project_clases import ToPrint, Entries
+from project_classes import ToPrint, Entries
 import json
 import requests
 import asyncio
