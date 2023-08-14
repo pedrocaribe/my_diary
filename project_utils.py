@@ -16,7 +16,7 @@ from cryptography.fernet import Fernet
 DB_NAME = "diary.db"
 
 
-def about(root):
+def about(root: Tk):
     w_about = Toplevel()
     w_about.resizable(False, False)
     w_about.title("About My Diary")
@@ -39,6 +39,67 @@ def about(root):
 
     # Force TopLevel to open in center of screen
     root.eval(f'tk::PlaceWindow {str(w_about)} center')
+
+
+def change_info(command: str, root: Tk, db, acc: str):
+    w_popup = Toplevel()
+    w_popup.resizable(False, False)
+    w_popup.grab_set()
+    w_popup.attributes("-topmost", "true")
+    w_popup.configure(pady=10, padx=10)
+    f_popup = ttk.Frame(w_popup)
+    f_popup.grid(column=0, row=0, sticky="nsew")
+    l_title = Label(f_popup, text="", anchor="center")
+    l_title.grid(column=0, row=0, columnspan=2)
+    if command == "pass":
+        l_title.configure(text="Change Password")
+        curr_pass = StringVar()
+        new_pass = StringVar()
+        conf_pass = StringVar()
+
+        Label(f_popup, text="Current Password:").grid(column=0, row=1)
+        Label(f_popup, text="New Password:").grid(column=0, row=2)
+        Label(f_popup, text="Confirm Password:").grid(column=0, row=3)
+        l_return = Label(f_popup, text="", anchor="center")
+        l_return.grid(column=0, row=5, columnspan=2)
+
+        Entry(f_popup, textvariable=curr_pass, show="*", width=30).grid(column=1, row=1)
+        Entry(f_popup, textvariable=new_pass, show="*", width=30).grid(column=1, row=2)
+        Entry(f_popup, textvariable=conf_pass, show="*", width=30).grid(column=1, row=3)
+
+        def changepass(bt):
+            o_pass = curr_pass.get()
+            n_pass = new_pass.get()
+            c_pass = conf_pass.get()
+            check_pass = db.execute("SELECT accounts.hashed_password, accounts.key_verification "
+                                    "FROM accounts "
+                                    "WHERE account = ?", (acc,)).fetchone()
+            h_pass = check_pass[0]
+            key = check_pass[1]
+
+            fernet = Fernet(key)
+            u_pass = fernet.decrypt(h_pass).decode()
+
+            if o_pass != u_pass:
+                l_return.configure(text="Password inserted does Not match current password")
+            elif n_pass == o_pass:
+                l_return.configure(text="New password can Not be the same as the current password")
+            elif n_pass != c_pass:
+                l_return.configure(text="Passwords do Not match")
+            else:
+                nh_pass = fernet.encrypt(n_pass.encode())
+                db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
+                db.commit()
+                l_return.configure(text="Password changed Successfully!")
+
+        b_submit = ttk.Button(f_popup, text="Submit", command=lambda: changepass(b_submit), width=20)
+        b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
+        b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
+        b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
+
+    elif command == "email":
+        ...
+
 
 
 def print_save(command, db_entry):
