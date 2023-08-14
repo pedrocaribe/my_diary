@@ -1,10 +1,10 @@
-import tkinter
-import tkinter.scrolledtext
-from project_utils import *
-from project_classes import User
+from tkinter import *
+from tkinter import ttk
 import sqlite3
+from cryptography.fernet import Fernet
 
-from project_utils import DB_NAME
+
+from project_classes import User
 
 
 def main(root):
@@ -53,7 +53,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
     passwd = passwd.get()
 
     # Establish connection to DB and create table if it is first use
-    db = sqlite3.connect(DB_NAME)
+    db = sqlite3.connect("diary.db")
     cur = db.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS accounts ("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -91,7 +91,9 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
 
             # If successful login, destroy toplevel window and show main
             w_tl.destroy()
-            main_window(w_root, acc)
+            user = User(w_root, acc)
+            user.garbage_collector()
+            user.main_window()
             w_root.deiconify()
         else:
             l_return.configure(text="Incorrect Password")
