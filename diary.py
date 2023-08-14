@@ -47,6 +47,10 @@ def main_window(root, acc=None):
     # Create Window Menu
     menubar = Menu(root)
     root.config(menu=menubar)
+    m_menu = Menu(menubar, tearoff=0)
+    m_menu.add_command(label="Change Password", command=lambda: change_pass(root, db))
+    m_menu.add_command(label="Change E-mail", command=lambda: change_email(root, db))
+    menubar.add_cascade(label="Menu", menu=m_menu, underline=0)
     m_help = Menu(menubar, tearoff=0)
     m_help.add_command(label="About", command=lambda: about(root))
     menubar.add_cascade(label="Help", menu=m_help, underline=0)
