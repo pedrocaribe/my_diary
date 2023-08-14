@@ -8,10 +8,11 @@ from project_utils import DB_NAME
 
 def main(root):
     # First screen to protect access by password
-    password_protection(root)
+    # password_protection(root)
 
     # Testing main window
-    # main_window(root, "teste")
+    garbage_collector()
+    main_window(root, "teste")
 
 
 def main_window(root, acc=None):
@@ -222,6 +223,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
     # Create new window for registration fields
     w_reg = Toplevel()
     w_reg.grab_set()  # Disable windows in background
+    w_reg.attributes("-topmost", "true")
     w_reg.configure(pady=10, padx=10)
     w_reg.resizable(False, False)
 

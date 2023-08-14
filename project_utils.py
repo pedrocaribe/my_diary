@@ -1,3 +1,4 @@
+import re
 import tkinter.messagebox
 
 from fpdf import FPDF
@@ -78,16 +79,21 @@ def multi(root: Tk, cal: Calendar, r_field: Label, lb: Listbox, db, acc: str, te
     for count, entry in list(enumerate(entries)):
         entry_temp = Entries(count, entry[0], entry[1], entry[2])
         entries_list.append(entry_temp)
-        lb.insert(entry_temp.count_id, entry_temp.entry)
+        if entry_temp.entry != "":
+            lb.insert(entry_temp.count_id, entry_temp.entry)
 
     def selected(event):
-        sel_index = lb.curselection()  # User selected entry's index
+        sel_index = lb.curselection()[0]  # User selected entry's index
 
         # Find object in list that has attribute count_id == selected index
-        sel_entry = next(x for x in entries_list if x.count_id == sel_index[0])
+        sel_entry = next(x for x in entries_list if x.count_id == sel_index)
         text = text_box.get("1.0", END)  # Fetch text within text box
+
+        # Check if there is text within text box, in order to allow user
+        # to save any changes done to the entry selected
         if len(text) > 1:
 
+            # Create popup window and "disable" actions to window in background
             popup = Toplevel()
             popup.grab_set()
             popup.attributes("-topmost", "true")
@@ -146,4 +152,20 @@ def motivate():
     url = "https://complimentr.com/api"
     return (json.loads(requests.get(url).text))['compliment'].capitalize()
 
+
+# Function to garbage collect every entry that contains only spaces or new lines
+# Possibly inserted by mistake by the user
+def garbage_collector():
+
+    # sqlite3 supports REGEXP but does not have it included
+    # In order to use it you have to user parametrized SQL
+    # Docs: https://www.sqlite.org/c3ref/create_function.html
+    def regexp(expr, item):
+        reg = re.compile(expr)
+        return reg.search(item) is not None
+
+    db = sqlite3.connect(DB_NAME)
+    db.create_function("REGEXP", 2, regexp)
+    db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
+    db.commit()
 
