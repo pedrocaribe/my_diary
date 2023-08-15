@@ -75,7 +75,8 @@ class User:
 
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
-        m_menu.add_command(label="Change Password", command=lambda: self.change_info("pass"), image=img, compound='left')
+        m_menu.add_command(label="Change Password",
+                           command=lambda: self.change_info("pass"), image=img, compound='left')
         m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
 
         m_help = Menu(menubar, tearoff=0)
@@ -138,14 +139,14 @@ class User:
         f_c3.grid(column=3, row=2, sticky="nsew")
 
         # Calling External function to save
-        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.print_save("save", e_c1, cal), width=20)
+        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.print_pdf("save", e_c1, cal), width=20)
         b_pdf.grid(column=3, row=1)
 
         # Calling External function to print
-        b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_save("print", e_c1, cal), width=20)
+        b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_pdf("print", e_c1, cal), width=20)
         b_print.grid(column=3, row=2)
 
-        b_email = ttk.Button(f_c3, text="Send as E-mail", command=lambda: self.print_save("email", e_c1, cal), width=20)
+        b_email = ttk.Button(f_c3, text="Send as E-mail", command=lambda: self.print_pdf("email", e_c1, cal), width=20)
         b_email.grid(column=3, row=3)
 
         # Row 6 - Footer
@@ -220,7 +221,8 @@ class User:
 
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
-            b_submit = ttk.Button(f_popup, text="Submit", command=lambda: changepass(w_popup, b_submit, b_cancel), width=20)
+            b_submit = ttk.Button(f_popup, text="Submit",
+                                  command=lambda: changepass(w_popup, b_submit, b_cancel), width=20)
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
         elif command == "email":
@@ -310,7 +312,7 @@ class User:
 
         lb.bind('<<ListboxSelect>>', selected)
 
-    def print_save(self, command: str, entry: Text, cal: Calendar):
+    def print_pdf(self, command: str, entry: Text, cal: Calendar):
 
         class PDF(FPDF):
             def header(self):
@@ -387,7 +389,7 @@ class User:
                 # Create text box to confirm action (True|False)
                 res = messagebox.askyesno("Confirmation", "Would you like to print the current entry?")
                 if res:
-                    # Create variable to return Success confirmation after print
+                    # Create variable to flag exception error
                     er = False
                     # Generate PDF and Print
                     try:
@@ -403,7 +405,7 @@ class User:
                         )
                     # Catch exceptions
                     # If AttributeError, ignore
-                    except AttributeError:
+                    except AttributeError("'int' object has no attribute 'write'"):
                         pass
                     except Exception as e:
                         er = True
