@@ -133,12 +133,15 @@ class User:
         f_c3.grid(column=3, row=2, sticky="nsew")
 
         # Calling External function to save
-        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.multi.print_save("save", entry), width=20)
+        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.multi.print_save("save", e_c1, cal), width=20)
         b_pdf.grid(column=3, row=1)
 
         # Calling External function to print
-        b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_save("print", entry), width=20)
+        b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_save("print", e_c1, cal), width=20)
         b_print.grid(column=3, row=2)
+
+        b_email = ttk.Button(f_c3, text="Send as E-mail", command=lambda: self.print_save("email", e_c1, cal), width=20)
+        b_email.grid(column=3, row=3)
 
         # Row 6 - Footer
         # Footer Frame
@@ -303,18 +306,19 @@ class User:
 
         lb.bind('<<ListboxSelect>>', selected)
 
-        def print_save(command, db_entry):
-            entry = ToPrint(db_entry)
-            if command == "save":
-                pdf = FPDF(orientation="portrait", format="A4")
-                pdf.add_page()
-                pdf.set_y(0)
+    def print_save(self, command: str, entry: Text, cal: Calendar):
+        text = entry.get("1.0", END)
+        text_date = cal.get_date()
+        if command == "save":
+            pdf = FPDF(orientation="portrait", format="A4")
+            pdf.add_page()
+            pdf.set_y(0)
 
-                pdf.output(f"exported_diary_{entry.date}.pdf")
-            elif command == "print":
-                ...
-            else:
-                raise ValueError("Invalid Command")
+            pdf.output(f"exported_diary_{text_date}.pdf")
+        elif command == "print":
+            ...
+        else:
+            raise ValueError("Invalid Command")
 
     def __str__(self):
         return [self.id, self.username, self.f_name, self.l_name]
