@@ -1,4 +1,6 @@
+import os.path
 from tkinter import *
+import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
 from datetime import date
@@ -9,6 +11,7 @@ import re
 import requests
 from fpdf import FPDF
 import json
+from PIL import Image, ImageTk
 
 
 class User:
@@ -60,15 +63,19 @@ class User:
         # Create Window Menu
         menubar = Menu(root)
         root.config(menu=menubar)
-        m_menu = Menu(menubar, tearoff=0)
-        m_menu.add_command(label="Change Password", command=lambda: self.change_info("pass"))
-        m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
-        menubar.add_cascade(label="Menu", menu=m_menu, underline=0)
-        m_help = Menu(menubar, tearoff=0)
-        m_help.add_command(label="About", command=lambda: about(root))
-        menubar.add_cascade(label="Help", menu=m_help, underline=0)
 
-        root.config(menu=menubar)
+        # img = PhotoImage(file="password.png")
+        img = Image.open("password.png").resize((10, 10))
+        img = ImageTk.PhotoImage(img)
+
+        m_menu = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Options", menu=m_menu, underline=0)
+        m_menu.add_command(label="Change Password", command=lambda: self.change_info("pass"), image=img, compound='left')
+        m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
+
+        m_help = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Help", menu=m_help, underline=0)
+        m_help.add_command(label="About", command=lambda: about(root))
 
         # Create main window frame
         f_main = ttk.Frame(root, padding=(3, 3, 12, 12), borderwidth=2)
@@ -106,7 +113,7 @@ class User:
 
         # Calling external function to update calendar and retrieve entries from DB
         b_cal = ttk.Button(f_main, text="Get Entries",
-                           command=lambda: multi(root, cal, l_date, lst_entry, db, acc, e_c1))
+                           command=lambda: self.multi(cal, l_date, lst_entry, db, acc, e_c1))
         b_cal.grid(column=0, row=4)
 
         # Setting empty space to return confirmation string for save
@@ -126,11 +133,11 @@ class User:
         f_c3.grid(column=3, row=2, sticky="nsew")
 
         # Calling External function to save
-        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: print_save("save", entry), width=20)
+        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.multi.print_save("save", entry), width=20)
         b_pdf.grid(column=3, row=1)
 
         # Calling External function to print
-        b_print = ttk.Button(f_c3, text="Print", command=lambda: print_save("print", entry), width=20)
+        b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_save("print", entry), width=20)
         b_print.grid(column=3, row=2)
 
         # Row 6 - Footer
@@ -174,10 +181,10 @@ class User:
             Entry(f_popup, textvariable=new_pass, show="*", width=30).grid(column=1, row=2)
             Entry(f_popup, textvariable=conf_pass, show="*", width=30).grid(column=1, row=3)
 
-            def changepass(bt):
-                o_pass = curr_pass.get()
-                n_pass = new_pass.get()
-                c_pass = conf_pass.get()
+            def changepass(w, bt_s, bt_c):
+                o_pass = curr_pass.get()  # Old password
+                n_pass = new_pass.get()  # New password
+                c_pass = conf_pass.get()  # Confirmation password
                 check_pass = db.execute("SELECT accounts.hashed_password, accounts.key_verification "
                                         "FROM accounts "
                                         "WHERE account = ?", (acc,)).fetchone()
@@ -198,11 +205,16 @@ class User:
                     db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
                     db.commit()
                     l_return.configure(text="Password changed Successfully!")
+                    bt_s.destroy()
+                    bt_c.destroy()
+                    b_temp = ttk.Button(w, text="Close", command=w.destroy, width=20)
+                    b_temp.grid(column=0, row=4, padx=5, pady=(10, 0), columnspan=2)
 
-            b_submit = ttk.Button(f_popup, text="Submit", command=lambda: changepass(b_submit), width=20)
-            b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
+            b_submit = ttk.Button(f_popup, text="Submit", command=lambda: changepass(w_popup, b_submit, b_cancel), width=20)
+            b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
+
 
         elif command == "email":
             ...
@@ -220,6 +232,90 @@ class User:
         db.create_function("REGEXP", 2, regexp)
         db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
         db.commit()
+
+    def multi(self, cal: Calendar, r_field: Label, lb: Listbox, db, user: str, text_box: Text):
+        # Variable assignment for readability
+        root = self.root
+        selected_date = cal.get_date()
+        r_field.config(text=f"Selected Date is: {selected_date}")
+        acc = user
+
+        # Clear entries from Listbox and allow single selection
+        lb.delete(0, tkinter.END)
+        lb.config(selectmode=SINGLE)
+
+        # Retrieve entries from DB for the specified user and date
+        entries = db.execute("SELECT entries.entry_id, entries.entry, entries.date "
+                             "FROM entries "
+                             "JOIN accounts "
+                             "ON accounts.id = entries.account_id "
+                             "WHERE accounts.account = ? "
+                             "AND entries.date = ?", (acc, selected_date,)).fetchall()
+
+        # Add entries to Listbox and create a list of entries
+        entries_list = []
+        for count, entry in list(enumerate(entries)):
+            entry_temp = Entries(count, entry[0], entry[1], entry[2])
+            entries_list.append(entry_temp)
+            if entry_temp.entry != "":
+                lb.insert(entry_temp.count_id, entry_temp.entry)
+
+        def selected():
+            sel_index = lb.curselection()[0]  # User selected entry's index
+
+            # Find object in list that has attribute count_id == selected index
+            sel_entry = next(x for x in entries_list if x.count_id == sel_index)
+            text = text_box.get("1.0", END)  # Fetch text within text box
+
+            # Check if there is text within text box, in order to allow user
+            # to save any changes done to the entry selected
+            if len(text) > 1:
+
+                # Create popup window and "disable" actions to window in background
+                popup = Toplevel()
+                popup.grab_set()
+                popup.attributes("-topmost", "true")
+                popup.resizable(False, False)
+                f_popup = ttk.Frame(popup, padding=(3, 3, 12, 12))
+                f_popup.grid(column=0, row=0, sticky="nsew")
+                l_popup = Label(f_popup, text="All changes will be lost.\n"
+                                              "Would you like to save the current entry?", anchor="center")
+                l_popup.grid(column=0, row=0, sticky="nsew", columnspan=2)
+
+                def yes():
+                    save_clear("save", text_box, db, acc, index=sel_entry.entry_id)
+                    popup.destroy()
+
+                b_yes = ttk.Button(f_popup, text="Yes", command=yes, width=10)
+                b_yes.grid(column=0, row=1)
+
+                def no():
+                    save_clear("clear", text_box, db, acc)
+                    popup.destroy()
+                    text_box.insert("1.0", sel_entry.entry)
+
+                b_no = ttk.Button(f_popup, text="No", command=no, width=10)
+                b_no.grid(column=1, row=1)
+                root.eval(f'tk::PlaceWindow {str(popup)} center')
+            else:
+                text_box.delete("1.0", END)
+                text_box.insert("1.0", sel_entry.entry)
+
+        lb.bind('<<ListboxSelect>>', selected)
+
+        @property
+        def print_save(command, db_entry):
+            entry = ToPrint(db_entry)
+            if command == "save":
+                pdf = FPDF(orientation="portrait", format="A4")
+                pdf.add_page()
+                pdf.set_y(0)
+
+                pdf.output(f"exported_diary_{entry.date}.pdf")
+            elif command == "print":
+                ...
+            else:
+                raise ValueError("Invalid Command")
 
 
 class Entries:
@@ -263,88 +359,6 @@ def about(root: Tk):
     root.eval(f'tk::PlaceWindow {str(w_about)} center')
 
 
-def print_save(command, db_entry):
-    entry = ToPrint(db_entry)
-    if command == "save":
-        pdf = FPDF(orientation="portrait", format="A4")
-        pdf.add_page()
-        pdf.set_y(0)
-
-        pdf.output(f"exported_diary_{entry.date}.pdf")
-    elif command == "print":
-        ...
-    else:
-        raise ValueError("Invalid Command")
-
-
-def multi(root: Tk, cal: Calendar, r_field: Label, lb: Listbox, db, user: str, text_box: Text):
-    # Variable assignment for readability
-    selected_date = cal.get_date()
-    r_field.config(text=f"Selected Date is: {selected_date}")
-    acc = user
-
-    # Clear entries from Listbox and allow single selection
-    lb.delete(0, tkinter.END)
-    lb.config(selectmode=SINGLE)
-
-    # Retrieve entries from DB for the specified user and date
-    entries = db.execute("SELECT entries.entry_id, entries.entry, entries.date "
-                         "FROM entries "
-                         "JOIN accounts "
-                         "ON accounts.id = entries.account_id "
-                         "WHERE accounts.account = ? "
-                         "AND entries.date = ?", (acc, selected_date,)).fetchall()
-
-    # Add entries to Listbox and create a list of entries
-    entries_list = []
-    for count, entry in list(enumerate(entries)):
-        entry_temp = Entries(count, entry[0], entry[1], entry[2])
-        entries_list.append(entry_temp)
-        if entry_temp.entry != "":
-            lb.insert(entry_temp.count_id, entry_temp.entry)
-
-    def selected():
-        sel_index = lb.curselection()[0]  # User selected entry's index
-
-        # Find object in list that has attribute count_id == selected index
-        sel_entry = next(x for x in entries_list if x.count_id == sel_index)
-        text = text_box.get("1.0", END)  # Fetch text within text box
-
-        # Check if there is text within text box, in order to allow user
-        # to save any changes done to the entry selected
-        if len(text) > 1:
-
-            # Create popup window and "disable" actions to window in background
-            popup = Toplevel()
-            popup.grab_set()
-            popup.attributes("-topmost", "true")
-            popup.resizable(False, False)
-            f_popup = ttk.Frame(popup, padding=(3, 3, 12, 12))
-            f_popup.grid(column=0, row=0, sticky="nsew")
-            l_popup = Label(f_popup, text="All changes will be lost.\n"
-                                          "Would you like to save the current entry?", anchor="center")
-            l_popup.grid(column=0, row=0, sticky="nsew", columnspan=2)
-
-            def yes():
-                save_clear("save", text_box, db, acc, index=sel_entry.entry_id)
-                popup.destroy()
-
-            b_yes = ttk.Button(f_popup, text="Yes", command=yes, width=10)
-            b_yes.grid(column=0, row=1)
-
-            def no():
-                save_clear("clear", text_box, db, acc)
-                popup.destroy()
-                text_box.insert("1.0", sel_entry.entry)
-
-            b_no = ttk.Button(f_popup, text="No", command=no, width=10)
-            b_no.grid(column=1, row=1)
-            root.eval(f'tk::PlaceWindow {str(popup)} center')
-        else:
-            text_box.delete("1.0", END)
-            text_box.insert("1.0", sel_entry.entry)
-
-    lb.bind('<<ListboxSelect>>', selected)
 
 
 def save_clear(command: str, entry: Text, db, account: str, r_save: Label = None, index: int = None):
