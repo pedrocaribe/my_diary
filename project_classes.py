@@ -1,7 +1,11 @@
 import os.path
 from tkinter import *
+from tkinter import filedialog, messagebox
 import tkinter as tk
 from tkinter import ttk
+
+import win32api
+import win32print
 from tkcalendar import Calendar
 from datetime import date
 from cryptography.fernet import Fernet
@@ -12,6 +16,7 @@ import requests
 from fpdf import FPDF
 import json
 from PIL import Image, ImageTk
+import os
 
 
 class User:
@@ -133,7 +138,7 @@ class User:
         f_c3.grid(column=3, row=2, sticky="nsew")
 
         # Calling External function to save
-        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.multi.print_save("save", e_c1, cal), width=20)
+        b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.print_save("save", e_c1, cal), width=20)
         b_pdf.grid(column=3, row=1)
 
         # Calling External function to print
@@ -218,7 +223,6 @@ class User:
             b_submit = ttk.Button(f_popup, text="Submit", command=lambda: changepass(w_popup, b_submit, b_cancel), width=20)
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
-
         elif command == "email":
             ...
 
@@ -263,7 +267,7 @@ class User:
             if entry_temp.entry != "":
                 lb.insert(entry_temp.count_id, entry_temp.entry)
 
-        def selected():
+        def selected(event):
             sel_index = lb.curselection()[0]  # User selected entry's index
 
             # Find object in list that has attribute count_id == selected index
@@ -307,16 +311,108 @@ class User:
         lb.bind('<<ListboxSelect>>', selected)
 
     def print_save(self, command: str, entry: Text, cal: Calendar):
+
+        class PDF(FPDF):
+            def header(self):
+                # Setting font: helvetica bold 15
+                self.set_font("helvetica", "B", 15)
+                # Moving cursor to the right
+                self.cell(80)
+                # Printing title
+                self.cell(30, 10, "My Diary", align="C")
+                # Performing a line break
+                self.ln(20)
+
+            def footer(self):
+                # Position cursor at 1.5cm from bottom
+                self.set_y(-15)
+                # Setting font: helvetica italic 8
+                self.set_font("helvetica", "I", 8)
+                # Printing author credits
+                self.cell(0, 10, f"My Diary - Your thoughts, safe!", align="C")
+
+            def entry_title(self, entry_date: str):
+                # Setting font: helvetica 12
+                self.set_font("helvetica", "", 12)
+                # Setting background color
+                self.set_fill_color(200, 220, 255)
+                # Printing entry date
+                self.cell(0, 6, f"Entry Date: {entry_date}", new_x="LMARGIN", new_y="NEXT", align="L", fill=True)
+                # Performing a line break
+                self.ln(4)
+
+            def entry_body(self, txt: str):
+                # Setting font: Times 12
+                self.set_font("Times", size=12)
+                # Printing justified text
+                self.multi_cell(0, 5, txt)
+                # Performing a line break
+                self.ln()
+                # Final mention in italics
+                self.set_font(style="I")
+                self.cell(0, 5, "(End of Entry)")
+
+            def print_entry(self, entry_date, txt):
+                self.add_page()
+                self.entry_title(entry_date)
+                self.entry_body(txt)
+
         text = entry.get("1.0", END)
         text_date = cal.get_date()
-        if command == "save":
-            pdf = FPDF(orientation="portrait", format="A4")
-            pdf.add_page()
-            pdf.set_y(0)
+        pdf = PDF(orientation="portrait", format="A4")
+        pdf.set_margin(10)
+        pdf.set_author(f"{self.username}")
+        pdf.set_title("My Diary")
+        pdf.print_entry(text_date, text)
 
-            pdf.output(f"exported_diary_{text_date}.pdf")
+        output_name = f"exported_diary_{text_date}.pdf"
+
+        if command == "save":
+            try:
+                pdf.output(
+                    filedialog.asksaveasfilename(
+                        initialdir="/",
+                        initialfile=output_name,
+                        title="Select Folder",
+                        filetypes=(("PDF File", "*.pdf"), ("all files", "*.*")),
+                        defaultextension=".pdf"
+                    )
+                )
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+
         elif command == "print":
-            ...
+            # Check if there is text to be printed
+            if len(text) > 1:
+                # Create text box to confirm action (True|False)
+                res = messagebox.askyesno("Confirmation", "Would you like to print the current entry?")
+                if res:
+                    # Create variable to return Success confirmation after print
+                    er = False
+                    # Generate PDF and Print
+                    try:
+                        pdf.output(
+                            win32api.ShellExecute(
+                                0,
+                                "print",
+                                output_name,
+                                '"%s"' % win32print.GetDefaultPrinter(),
+                                ".",
+                                0
+                            )
+                        )
+                    # Catch exceptions
+                    # If AttributeError, ignore
+                    except AttributeError:
+                        pass
+                    except Exception as e:
+                        er = True
+                        messagebox.showerror("Error", str(e))
+                    finally:
+                        if not er:
+                            messagebox.showinfo("Success", "Success!")
+            else:
+                messagebox.showinfo("Info", "There's nothing to be printed")
         else:
             raise ValueError("Invalid Command")
 
@@ -330,14 +426,6 @@ class Entries:
         self.entry_id = e_id
         self.entry = e
         self.date = d
-
-
-class ToPrint:
-    def __init__(self, db_e):
-        self.owner = db_e[0]
-        self.entry_id = db_e[1]
-        self.entry = db_e[2]
-        self.date = db_e[3]
 
 
 def about(root: Tk):
@@ -363,8 +451,6 @@ def about(root: Tk):
 
     # Force TopLevel to open in center of screen
     root.eval(f'tk::PlaceWindow {str(w_about)} center')
-
-
 
 
 def save_clear(command: str, entry: Text, db, account: str, r_save: Label = None, index: int = None):
