@@ -303,7 +303,6 @@ class User:
 
         lb.bind('<<ListboxSelect>>', selected)
 
-        @property
         def print_save(command, db_entry):
             entry = ToPrint(db_entry)
             if command == "save":
@@ -316,6 +315,9 @@ class User:
                 ...
             else:
                 raise ValueError("Invalid Command")
+
+    def __str__(self):
+        return [self.id, self.username, self.f_name, self.l_name]
 
 
 class Entries:
