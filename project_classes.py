@@ -17,6 +17,7 @@ from fpdf import FPDF
 import json
 from PIL import Image, ImageTk
 import os
+import time
 
 
 class User:
@@ -270,7 +271,8 @@ class User:
                 lb.insert(entry_temp.count_id, entry_temp.entry)
 
         def selected(event):
-            sel_index = lb.curselection()[0]  # User selected entry's index
+            widget = event.widget
+            sel_index = widget.curselection()[0]  # User selected entry's index
 
             # Find object in list that has attribute count_id == selected index
             sel_entry = next(x for x in entries_list if x.count_id == sel_index)
@@ -279,33 +281,14 @@ class User:
             # Check if there is text within text box, in order to allow user
             # to save any changes done to the entry selected
             if len(text) > 1:
-
-                # Create popup window and "disable" actions to window in background
-                popup = Toplevel()
-                popup.grab_set()
-                popup.attributes("-topmost", "true")
-                popup.resizable(False, False)
-                f_popup = ttk.Frame(popup, padding=(3, 3, 12, 12))
-                f_popup.grid(column=0, row=0, sticky="nsew")
-                l_popup = Label(f_popup, text="All changes will be lost.\n"
-                                              "Would you like to save the current entry?", anchor="center")
-                l_popup.grid(column=0, row=0, sticky="nsew", columnspan=2)
-
-                def yes():
-                    save_clear("save", text_box, db, acc, index=sel_entry.entry_id)
-                    popup.destroy()
-
-                b_yes = ttk.Button(f_popup, text="Yes", command=yes, width=10)
-                b_yes.grid(column=0, row=1)
-
-                def no():
-                    save_clear("clear", text_box, db, acc)
-                    popup.destroy()
-                    text_box.insert("1.0", sel_entry.entry)
-
-                b_no = ttk.Button(f_popup, text="No", command=no, width=10)
-                b_no.grid(column=1, row=1)
-                root.eval(f'tk::PlaceWindow {str(popup)} center')
+                res = messagebox.askyesno("Save Entry",
+                                          "Would you like to save the current entry?\n"
+                                          "All changes will be lost!")
+                if res:
+                    Entries.save(db)
+                    ...
+                else:
+                    text_box.delete("1.0", END)
             else:
                 text_box.delete("1.0", END)
                 text_box.insert("1.0", sel_entry.entry)
@@ -401,8 +384,7 @@ class User:
                                 '"%s"' % win32print.GetDefaultPrinter(),
                                 ".",
                                 0
-                            )
-                        )
+                            ))
                     # Catch exceptions
                     # If AttributeError, ignore
                     except AttributeError("'int' object has no attribute 'write'"):
@@ -428,6 +410,9 @@ class Entries:
         self.entry_id = e_id
         self.entry = e
         self.date = d
+
+    def save(self, db):
+        ...
 
 
 def about(root: Tk):
