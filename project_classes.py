@@ -1,7 +1,5 @@
-import os.path
 from tkinter import *
 from tkinter import filedialog, messagebox
-import tkinter as tk
 from tkinter import ttk
 
 import win32api
@@ -16,8 +14,6 @@ import requests
 from fpdf import FPDF
 import json
 from PIL import Image, ImageTk
-import os
-import time
 
 
 class User:
@@ -34,11 +30,11 @@ class User:
         self.hashed_passwd = hashed_pass
         self.hash_key = key
         self.root = root
+        self.current_selection = None
 
     def main_window(self):
         # Force main window to open in center of screen
         root = self.root
-        acc = self.username
         root.wm_attributes('-alpha', 0)  # Hide window to avoid flicking screen while calculating center
 
         # Window size
@@ -120,18 +116,15 @@ class User:
 
         # Calling external function to update calendar and retrieve entries from DB
         b_cal = ttk.Button(f_main, text="Get Entries",
-                           command=lambda: self.multi(cal, l_date, lst_entry, db, acc, e_c1))
+                           command=lambda: self.multi(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
 
-        # Setting empty space to return confirmation string for save
-        r_save = Label(f_main, text="")
-        r_save.grid(column=1, row=4, columnspan=2)
-
-        b_save = ttk.Button(f_main, text="Save", command=lambda: save_clear("save", e_c1, db, acc, r_save), width=20)
+        # Button to Save current entry
+        b_save = ttk.Button(f_main, text="Save", command=lambda: save_entry(e_c1, self.username, db), width=20)
         b_save.grid(column=1, row=4)
 
         # Column 2
-        b_clear = ttk.Button(f_main, text="Clear", command=lambda: save_clear("clear", e_c1, db, acc, r_save), width=20)
+        b_clear = ttk.Button(f_main, text="Clear", command=lambda: clear_entry(e_c1), width=20)
         b_clear.grid(column=2, row=4)
 
         # Column 3
@@ -243,12 +236,12 @@ class User:
         db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
         db.commit()
 
-    def multi(self, cal: Calendar, r_field: Label, lb: Listbox, db, user: str, text_box: Text):
+    def multi(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         # Variable assignment for readability
-        root = self.root
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")
-        acc = user
+        acc = self.username
+        db = self.db
 
         # Clear entries from Listbox and allow single selection
         lb.delete(0, tkinter.END)
@@ -271,25 +264,32 @@ class User:
                 lb.insert(entry_temp.count_id, entry_temp.entry)
 
         def selected(event):
-            widget = event.widget
-            sel_index = widget.curselection()[0]  # User selected entry's index
+            sel_index = lb.curselection()[0]  # User selected entry's index
 
             # Find object in list that has attribute count_id == selected index
             sel_entry = next(x for x in entries_list if x.count_id == sel_index)
-            text = text_box.get("1.0", END)  # Fetch text within text box
+            text = re.sub(r"\n$", "", text_box.get("1.0", END))  # Fetch text within text box
 
             # Check if there is text within text box, in order to allow user
             # to save any changes done to the entry selected
-            if len(text) > 1:
-                res = messagebox.askyesno("Save Entry",
-                                          "Would you like to save the current entry?\n"
-                                          "All changes will be lost!")
-                if res:
-                    Entries.save(db)
-                    ...
+            # <<<< NEED TO FIND A WAY TO TRACK OLD ENTRY AND COMPARE IN ORDER TO NOT PROMPT USER AT EVERY CLICK >>>>
+            if len(text) > 1 and self.current_selection:
+                if text != self.current_selection:
+                    res = messagebox.askyesno("Save Entry",
+                                              "Would you like to save the current entry?\n"
+                                              "All changes will be lost!")
+                    if res:
+                        save_entry(text_box, acc, db, index=sel_entry.entry_id)
+                    else:
+                        text_box.delete("1.0", END)
+                        text_box.insert("1.0", sel_entry.entry)
+                        self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
                 else:
+                    self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
                     text_box.delete("1.0", END)
+                    text_box.insert("1.0", sel_entry.entry)
             else:
+                self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
                 text_box.delete("1.0", END)
                 text_box.insert("1.0", sel_entry.entry)
 
@@ -411,8 +411,26 @@ class Entries:
         self.entry = e
         self.date = d
 
-    def save(self, db):
-        ...
+
+def save_entry(entry_box: Text, acc: str, db, index=None):
+    text = entry_box.get("1.0", END)
+    acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (acc,)).fetchone()
+    try:
+        if index:
+            db.execute("UPDATE entries SET entry = ? WHERE entry_id = ? AND account_id = ?", (text, index, acc_id[0]))
+        else:
+            db.execute("INSERT INTO entries (account_id, entry, date) VALUES (?, ?, ?)",
+                       (acc_id[0], text, date.today(),))
+        db.commit()
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed, contact Administrator.\n{e}")
+    else:
+        messagebox.showinfo("Success", "Entry Saved.")
+        clear_entry(entry_box)
+
+
+def clear_entry(box: Text):
+    box.delete("1.0", END)
 
 
 def about(root: Tk):
@@ -438,30 +456,6 @@ def about(root: Tk):
 
     # Force TopLevel to open in center of screen
     root.eval(f'tk::PlaceWindow {str(w_about)} center')
-
-
-def save_clear(command: str, entry: Text, db, account: str, r_save: Label = None, index: int = None):
-    if command == "save":
-        text = entry.get("1.0", END)
-        acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (account,)).fetchone()
-        try:
-            if index:
-                db.execute("UPDATE entries SET entry = ? WHERE entry_id = ? AND account_id = ?", (text, index, acc_id))
-            else:
-                db.execute("INSERT INTO entries (account_id, entry, date) VALUES (?, ?, ?)",
-                           (acc_id[0], text, date.today(),))
-            db.commit()
-        except Exception as e:
-            r_save.config(text=f"Failed, contact Administrator.{e}")
-        else:
-            r_save.config(text="Entry Saved.")
-            save_clear("clear", entry, db, account, r_save)
-
-    elif command == "clear":
-        entry.delete("1.0", END)
-
-    else:
-        raise ValueError("Invalid Command")
 
 
 def motivate():
