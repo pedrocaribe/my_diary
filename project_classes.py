@@ -55,7 +55,7 @@ class User:
 
         root.wm_attributes('-alpha', 1)  # Show window after calculations
 
-        # Establish connection to DB
+        # Create table for accounts
         db = self.db
         db.execute("CREATE TABLE IF NOT EXISTS entries ("
                    "account_id INTEGER, "
@@ -67,10 +67,11 @@ class User:
         menubar = Menu(root)
         root.config(menu=menubar)
 
-        # img = PhotoImage(file="password.png")
+        # Use image as icon, resized
         img = Image.open("password.png").resize((10, 10))
         img = ImageTk.PhotoImage(img)
 
+        # Create menu and add cascade for account options
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
         m_menu.add_command(label="Change Password",
@@ -206,7 +207,7 @@ class User:
                 elif n_pass != c_pass:
                     l_return.configure(text="Passwords do Not match")
                 else:
-                    nh_pass = fernet.encrypt(n_pass.encode())
+                    nh_pass = fernet.encrypt(n_pass.encode())  # Hashed new password
                     db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
                     db.commit()
                     l_return.configure(text="Password changed Successfully!")
@@ -222,7 +223,7 @@ class User:
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
         elif command == "email":
-            ...
+            messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
 
     def garbage_collector(self):
 
