@@ -208,7 +208,7 @@ class User:
                     nh_pass = fernet.encrypt(n_pass.encode())  # Hashed new password
                     db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
                     db.commit()
-                    messagebox.showinfo("Success", "Passowrd changed successfully")
+                    messagebox.showinfo("Success", "Password changed successfully")
                     bt_s.destroy()
                     bt_c.destroy()
                     b_temp = ttk.Button(w, text="Close", command=w.destroy, width=20)
@@ -221,6 +221,7 @@ class User:
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
         elif command == "email":
+            w_popup.destroy()
             messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
 
     def garbage_collector(self):
