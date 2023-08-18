@@ -322,34 +322,6 @@ class User:
                 self.current_selection_entry = sel_entry.entry
                 self.current_selection_id = sel_entry.entry_id
                 text_box.insert("1.0", sel_entry.entry)
-            # sel_index = lb.curselection()[0]  # User selected entry's index
-            #
-            # # Find object in list that has attribute count_id == selected index
-            # sel_entry = next(x for x in entries_list if x.count_id == sel_index)
-            # text = re.sub(r"\n$", "", text_box.get("1.0", END))  # Fetch text within text box
-            #
-            # # Check if there is text within text box, in order to allow user
-            # # to save any changes done to the entry selected
-            # # <<<< NEED TO FIND A WAY TO TRACK OLD ENTRY AND COMPARE IN ORDER TO NOT PROMPT USER AT EVERY CLICK >>>>
-            # if len(text) > 1 and self.current_selection:
-            #     if text != self.current_selection:
-            #         res = messagebox.askyesno("Save Entry",
-            #                                   "Would you like to save the current entry?\n"
-            #                                   "All changes will be lost!")
-            #         if res:
-            #             save_entry(text_box, acc, db, index=sel_entry.entry_id)
-            #         else:
-            #             text_box.delete("1.0", END)
-            #             text_box.insert("1.0", sel_entry.entry)
-            #             self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
-            #     else:
-            #         self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
-            #         text_box.delete("1.0", END)
-            #         text_box.insert("1.0", sel_entry.entry)
-            # else:
-            #     self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
-            #     text_box.delete("1.0", END)
-            #     text_box.insert("1.0", sel_entry.entry)
 
         lb.bind('<<ListboxSelect>>', selected)
 
