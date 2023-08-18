@@ -33,6 +33,7 @@ class User:
         self.current_selection_entry = self.current_selection_id = None
 
     def main_window(self):
+
         # Force main window to open in center of screen
         root = self.root
         root.wm_attributes('-alpha', 0)  # Hide window to avoid flicking screen while calculating center
@@ -66,14 +67,17 @@ class User:
         menubar = Menu(root)
         root.config(menu=menubar)
 
-        # Use image as icon for password change, resized, antialiasing
-        pass_icon = ImageTk.PhotoImage(Image.open("password.png").resize((10, 10), Image.Resampling.LANCZOS))
-
         # Create menu and add cascade for account options
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
+
+        # Use image as icon for password change, resized, antialiasing.
+        # Set to be an attribute of class due to python's garbage collection
+        m_menu.pass_icon = ImageTk.PhotoImage(Image.open("password.png").resize((12, 12), Image.Resampling.LANCZOS))
+        # TODO: Create icon for e-mail change menu
+
         m_menu.add_command(label="Change Password",
-                           command=lambda: self.change_info("pass"), image=pass_icon, compound='left')
+                           command=lambda: self.change_info("pass"), image=m_menu.pass_icon, compound='left')
         m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
 
         m_help = Menu(menubar, tearoff=0)
@@ -109,7 +113,7 @@ class User:
         l_date = Label(f_main, text="")
         l_date.grid(column=0, row=5)
 
-        # Calling external function to update calendar and retrieve entries from DB
+        # Calling method to update calendar and retrieve entries from DB
         b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.get_entries(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
 

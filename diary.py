@@ -9,6 +9,7 @@ from project_classes import User
 
 def main(root):
 
+
     root.withdraw()  # Hide main window until user is authenticated
 
     # Create new toplevel window
