@@ -160,40 +160,46 @@ class User:
         l_phrase.grid(column=0, row=1, sticky="nsew", pady=5)
 
     def change_info(self, command: str):
+
+        # Variable assignment for easier understanding
         acc = self.username
         db = self.db
+
+        # Create popup and set attributes
         w_popup = Toplevel()
-        w_popup.resizable(False, False)
-        w_popup.grab_set()
-        w_popup.attributes("-topmost", "true")
+        w_popup.resizable(False, False)  # Not resizable
+        w_popup.grab_set()  # Disable actions to windows in background
+        w_popup.attributes("-topmost", "true")  # Focus when created
         w_popup.configure(pady=10, padx=10)
         f_popup = ttk.Frame(w_popup)
         f_popup.grid(column=0, row=0, sticky="nsew")
-        l_title = Label(f_popup, text="", anchor="center")
-        l_title.grid(column=0, row=0, columnspan=2)
-        if command == "pass":
-            l_title.configure(text="Change Password")
-            curr_pass = StringVar()
-            new_pass = StringVar()
-            conf_pass = StringVar()
 
+        # Varied actions depending on option selected
+        if command == "pass":
+            # Title
+            Label(f_popup, text="Change Password", anchor="center").grid(column=0, row=0, columnspan=2, pady=(0, 5))
+
+            # Field Labels
             Label(f_popup, text="Current Password:").grid(column=0, row=1)
             Label(f_popup, text="New Password:").grid(column=0, row=2)
             Label(f_popup, text="Confirm Password:").grid(column=0, row=3)
+
+            # Information fetching
+            curr_pass = StringVar()
+            new_pass = StringVar()
+            conf_pass = StringVar()
 
             Entry(f_popup, textvariable=curr_pass, show="*", width=30).grid(column=1, row=1)
             Entry(f_popup, textvariable=new_pass, show="*", width=30).grid(column=1, row=2)
             Entry(f_popup, textvariable=conf_pass, show="*", width=30).grid(column=1, row=3)
 
-            def changepass(w, bt_s, bt_c):
+            def changepass():
                 o_pass = curr_pass.get()  # Old password
                 n_pass = new_pass.get()  # New password
                 c_pass = conf_pass.get()  # Confirmation password
-                check_pass = db.execute("SELECT accounts.hashed_password, accounts.key_verification "
-                                        "FROM accounts "
-                                        "WHERE account = ?", (acc,)).fetchone()
-                h_pass = check_pass[0]
-                key = check_pass[1]
+                h_pass, key = db.execute("SELECT accounts.hashed_password, accounts.key_verification "
+                                         "FROM accounts "
+                                         "WHERE account = ?", (acc,)).fetchone()
 
                 fernet = Fernet(key)
                 u_pass = fernet.decrypt(h_pass).decode()
@@ -213,8 +219,7 @@ class User:
 
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
-            b_submit = ttk.Button(f_popup, text="Submit",
-                                  command=lambda: changepass(w_popup, b_submit, b_cancel), width=20)
+            b_submit = ttk.Button(f_popup, text="Submit", command=changepass, width=20)
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
         elif command == "email":
