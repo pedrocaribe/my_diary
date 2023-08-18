@@ -232,11 +232,15 @@ class User:
             w_popup.destroy()
             messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
 
+    # Garbage collector, to delete any empty entries from DB
     def garbage_collector(self):
 
-        # sqlite3 supports REGEXP but does not have it included
-        # In order to use it you have to user parametrized SQL
-        # Docs: https://www.sqlite.org/c3ref/create_function.html
+        """
+        sqlite3 supports REGEXP but does not have it included
+        In order to use it, you have to use parametrized SQL
+        Docs: https://www.sqlite.org/c3ref/create_function.html
+        """
+
         def regexp(expr, item):
             reg = re.compile(expr)
             return reg.search(item) is not None
@@ -250,6 +254,7 @@ class User:
         else:
             db.commit()
 
+    # Multi function method
     def multi(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         # Variable assignment for readability
         selected_date = cal.get_date()
