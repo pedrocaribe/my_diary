@@ -129,7 +129,7 @@ class User:
         e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=3)
 
         # Calling external function to update calendar and retrieve entries from DB
-        b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.multi(cal, l_date, lst_entry, e_c1))
+        b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.populate(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
 
         # Button to Clear and Create new Entry
@@ -285,8 +285,8 @@ class User:
         else:
             db.commit()
 
-    # Multi function method
-    def multi(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
+    # Method to populate listbox and entry box
+    def populate(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         # Variable assignment for readability
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")
