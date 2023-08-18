@@ -468,13 +468,16 @@ class User:
                             messagebox.showinfo("Success", "Success!")
             else:
                 messagebox.showinfo("Info", "There's nothing to be printed")
+
         elif command == "email":
             # Added re.sub to convert \n to a %0D%0A to conform wth Mailto URI Scheme
             # https://www.rfc-editor.org/rfc/rfc6068#section-5
-            body = re.sub("\n", "%0D%0A", f"My Diary - {text_date}\n\n"
-                                          f"-------------------\n\n"
-                                          f"{text}")
+            body = (f"My Diary - {text_date}\n\n"
+                    f"-------------------\n\n"
+                    f"{text}")
+            body = re.sub("\n", "%0D%0A", body)
             webbrowser.open(f"mailto:?subject=My Diary - {text_date}&body={body}")
+
         else:
             raise ValueError("Invalid Command")
 
