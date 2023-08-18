@@ -197,13 +197,17 @@ class User:
                 o_pass = curr_pass.get()  # Old password
                 n_pass = new_pass.get()  # New password
                 c_pass = conf_pass.get()  # Confirmation password
+
+                # Fetch Hashed Pass and Key from DB
                 h_pass, key = db.execute("SELECT accounts.hashed_password, accounts.key_verification "
                                          "FROM accounts "
                                          "WHERE account = ?", (acc,)).fetchone()
 
+                # Decrypt password provided
                 fernet = Fernet(key)
                 u_pass = fernet.decrypt(h_pass).decode()
 
+                # User mistyping scenarios
                 if o_pass != u_pass:
                     messagebox.showinfo("Info", "Password inserted does Not match current password")
                 elif n_pass == o_pass:
@@ -211,17 +215,19 @@ class User:
                 elif n_pass != c_pass:
                     messagebox.showinfo("Info", "Passwords do Not match")
                 else:
-                    nh_pass = fernet.encrypt(n_pass.encode())  # Hashed new password
+                    nh_pass = fernet.encrypt(n_pass.encode())  # Encrypt new password
                     db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
                     db.commit()
                     messagebox.showinfo("Success", "Password changed successfully")
                     w_popup.destroy()
 
+            # Create buttons to submit or cancel changes
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
             b_submit = ttk.Button(f_popup, text="Submit", command=changepass, width=20)
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
+        # Change e-mail << STILL TO IMPLEMENT >>
         elif command == "email":
             w_popup.destroy()
             messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
