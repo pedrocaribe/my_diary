@@ -30,7 +30,8 @@ class User:
         self.hashed_passwd = hashed_pass
         self.hash_key = key
         self.root = root
-        self.current_selection = None
+        self.current_selection_entry = None
+        self.current_selection_id = None
 
     def main_window(self):
         # Force main window to open in center of screen
@@ -120,7 +121,8 @@ class User:
         b_cal.grid(column=0, row=4)
 
         # Button to Save current entry
-        b_save = ttk.Button(f_main, text="Save", command=lambda: save_entry(e_c1, self.username, db), width=20)
+        b_save = ttk.Button(f_main, text="Save", command=lambda: self.save_entry(
+            e_c1, None if not self.current_selection_id else self.current_selection_id), width=20)
         b_save.grid(column=1, row=4)
 
         # Column 2
@@ -233,65 +235,77 @@ class User:
 
         db = self.db
         db.create_function("REGEXP", 2, regexp)
-        db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
-        db.commit()
+        try:
+            db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
+        except sqlite3.OperationalError:
+            pass
+        else:
+            db.commit()
 
     def multi(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         # Variable assignment for readability
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")
-        acc = self.username
-        db = self.db
 
-        # Clear entries from Listbox and allow single selection
-        lb.delete(0, tkinter.END)
-        lb.config(selectmode=SINGLE)
-
-        # Retrieve entries from DB for the specified user and date
-        entries = db.execute("SELECT entries.entry_id, entries.entry, entries.date "
-                             "FROM entries "
-                             "JOIN accounts "
-                             "ON accounts.id = entries.account_id "
-                             "WHERE accounts.account = ? "
-                             "AND entries.date = ?", (acc, selected_date,)).fetchall()
-
-        # Add entries to Listbox and create a list of entries
-        entries_list = []
-        for count, entry in list(enumerate(entries)):
-            entry_temp = Entries(count, entry[0], entry[1], entry[2])
-            entries_list.append(entry_temp)
-            if entry_temp.entry != "":
-                lb.insert(entry_temp.count_id, entry_temp.entry)
+        entries_list = self.fill_list(lb, selected_date)
 
         def selected(event):
             sel_index = lb.curselection()[0]  # User selected entry's index
+            sel_entry = next(_ for _ in entries_list if _.count_id == sel_index)
+            sel_entry.entry = re.sub(r"\n$", "", sel_entry.entry)
+            text = re.sub(r"\n$", "", text_box.get("1.0", END))
 
-            # Find object in list that has attribute count_id == selected index
-            sel_entry = next(x for x in entries_list if x.count_id == sel_index)
-            text = re.sub(r"\n$", "", text_box.get("1.0", END))  # Fetch text within text box
-
-            # Check if there is text within text box, in order to allow user
-            # to save any changes done to the entry selected
-            # <<<< NEED TO FIND A WAY TO TRACK OLD ENTRY AND COMPARE IN ORDER TO NOT PROMPT USER AT EVERY CLICK >>>>
-            if len(text) > 1 and self.current_selection:
-                if text != self.current_selection:
+            if len(text) > 1:
+                if text != self.current_selection_entry:
                     res = messagebox.askyesno("Save Entry",
                                               "Would you like to save the current entry?\n"
                                               "All changes will be lost!")
                     if res:
-                        save_entry(text_box, acc, db, index=sel_entry.entry_id)
+                        self.save_entry(text_box, sel_entry.entry_id)
+                        self.fill_list(lb, selected_date)
                     else:
                         text_box.delete("1.0", END)
                         text_box.insert("1.0", sel_entry.entry)
-                        self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
+                        self.current_selection_id = sel_entry.entry_id
+                        self.current_selection_entry = sel_entry.entry
                 else:
-                    self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
                     text_box.delete("1.0", END)
                     text_box.insert("1.0", sel_entry.entry)
+                    self.current_selection_id = sel_entry.entry_id
+                    self.current_selection_entry = sel_entry.entry
+
             else:
-                self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
-                text_box.delete("1.0", END)
+                self.current_selection_entry = sel_entry.entry
+                self.current_selection_id = sel_entry.entry_id
                 text_box.insert("1.0", sel_entry.entry)
+            # sel_index = lb.curselection()[0]  # User selected entry's index
+            #
+            # # Find object in list that has attribute count_id == selected index
+            # sel_entry = next(x for x in entries_list if x.count_id == sel_index)
+            # text = re.sub(r"\n$", "", text_box.get("1.0", END))  # Fetch text within text box
+            #
+            # # Check if there is text within text box, in order to allow user
+            # # to save any changes done to the entry selected
+            # # <<<< NEED TO FIND A WAY TO TRACK OLD ENTRY AND COMPARE IN ORDER TO NOT PROMPT USER AT EVERY CLICK >>>>
+            # if len(text) > 1 and self.current_selection:
+            #     if text != self.current_selection:
+            #         res = messagebox.askyesno("Save Entry",
+            #                                   "Would you like to save the current entry?\n"
+            #                                   "All changes will be lost!")
+            #         if res:
+            #             save_entry(text_box, acc, db, index=sel_entry.entry_id)
+            #         else:
+            #             text_box.delete("1.0", END)
+            #             text_box.insert("1.0", sel_entry.entry)
+            #             self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
+            #     else:
+            #         self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
+            #         text_box.delete("1.0", END)
+            #         text_box.insert("1.0", sel_entry.entry)
+            # else:
+            #     self.current_selection = re.sub(r"\n$", "", sel_entry.entry)
+            #     text_box.delete("1.0", END)
+            #     text_box.insert("1.0", sel_entry.entry)
 
         lb.bind('<<ListboxSelect>>', selected)
 
@@ -400,6 +414,55 @@ class User:
         else:
             raise ValueError("Invalid Command")
 
+    def fill_list(self, lb: Listbox, selected_date):
+
+        acc = self.username
+        # Add entries to Listbox and create a list of entries
+        entries_list = []
+
+        db = self.db
+        # Retrieve entries from DB for the specified user and date
+        entries = db.execute("SELECT entries.entry_id, entries.entry, entries.date "
+                             "FROM entries "
+                             "JOIN accounts "
+                             "ON accounts.id = entries.account_id "
+                             "WHERE accounts.account = ? "
+                             "AND entries.date = ?", (acc, selected_date,)).fetchall()
+
+        # Clear entries from Listbox and allow single selection
+        lb.delete(0, tkinter.END)
+        lb.config(selectmode=SINGLE)
+
+        for count, entry in list(enumerate(entries)):
+            entry_temp = Entries(count, entry[0], entry[1], entry[2])
+            entries_list.append(entry_temp)
+            if entry_temp.entry != "":
+                lb.insert(entry_temp.count_id, entry_temp.entry)
+
+        return entries_list
+
+    def save_entry(self, entry_box: Text, index=None):
+        acc = self.username
+        text = entry_box.get("1.0", END)
+        db = self.db
+        acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (acc,)).fetchone()
+        try:
+            if index:
+                db.execute("UPDATE entries "
+                           "SET entry = ? "
+                           "WHERE entry_id = ? "
+                           "AND account_id = ?", (re.sub(r"\n$", "", text), index, acc_id[0]))
+            else:
+                db.execute("INSERT INTO entries (account_id, entry, date) "
+                           "VALUES (?, ?, ?)",
+                           (acc_id[0], re.sub("\n$", "", text), date.today(),))
+            db.commit()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed, contact Administrator.\n{e}")
+        else:
+            messagebox.showinfo("Success", "Entry Saved.")
+            clear_entry(entry_box)
+
     def __str__(self):
         return [self.id, self.username, self.f_name, self.l_name]
 
@@ -410,23 +473,6 @@ class Entries:
         self.entry_id = e_id
         self.entry = e
         self.date = d
-
-
-def save_entry(entry_box: Text, acc: str, db, index=None):
-    text = entry_box.get("1.0", END)
-    acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (acc,)).fetchone()
-    try:
-        if index:
-            db.execute("UPDATE entries SET entry = ? WHERE entry_id = ? AND account_id = ?", (text, index, acc_id[0]))
-        else:
-            db.execute("INSERT INTO entries (account_id, entry, date) VALUES (?, ?, ?)",
-                       (acc_id[0], text, date.today(),))
-        db.commit()
-    except Exception as e:
-        messagebox.showerror("Error", f"Failed, contact Administrator.\n{e}")
-    else:
-        messagebox.showinfo("Success", "Entry Saved.")
-        clear_entry(entry_box)
 
 
 def clear_entry(box: Text):
