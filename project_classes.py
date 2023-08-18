@@ -1,19 +1,18 @@
 from tkinter import *
-from tkinter import filedialog, messagebox
-from tkinter import ttk
+from tkinter import filedialog, messagebox, ttk
+from tkcalendar import Calendar
+from cryptography.fernet import Fernet
+from datetime import date
+from fpdf import FPDF
+from PIL import Image, ImageTk
 
 import win32api
 import win32print
-from tkcalendar import Calendar
-from datetime import date
-from cryptography.fernet import Fernet
 import sqlite3
 import tkinter.scrolledtext
 import re
 import requests
-from fpdf import FPDF
 import json
-from PIL import Image, ImageTk
 import webbrowser
 
 
@@ -24,6 +23,7 @@ class User:
                                                                                    "FROM accounts "
                                                                                    "WHERE account = ?", (user,)
                                                                                    ).fetchone()
+
         self.id = db_id
         self.username = username
         self.f_name = first_name
@@ -468,6 +468,13 @@ class User:
                             messagebox.showinfo("Success", "Success!")
             else:
                 messagebox.showinfo("Info", "There's nothing to be printed")
+        elif command == "email":
+            # Added re.sub to convert \n to a %0D%0A to conform wth Mailto URI Scheme
+            # https://www.rfc-editor.org/rfc/rfc6068#section-5
+            body = re.sub("\n", "%0D%0A", f"My Diary - {text_date}\n\n"
+                                          f"-------------------\n\n"
+                                          f"{text}")
+            webbrowser.open(f"mailto:?subject=My Diary - {text_date}&body={body}")
         else:
             raise ValueError("Invalid Command")
 
