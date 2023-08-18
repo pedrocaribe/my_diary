@@ -88,14 +88,14 @@ class User:
 
         # Row 0 -> Title
         title = Label(f_main, text="My Diary", anchor="center", pady=3, font=("Arial", 18), relief="sunken")
-        title.grid(column=0, row=0, sticky="nsew", columnspan=4)
+        title.grid(column=0, row=0, sticky="nsew", columnspan=5)
 
         # Column 0 -> Left
         c0_title = Label(f_main, text=f"Entries for the Date:", anchor="center", font=("Arial", 10))
         c0_title.grid(column=0, row=1, sticky="nsew", padx=(10, 10))
 
-        # Instantiating Listbox with fixed size
-        lst_entry = Listbox(f_main, height=20, width=41, selectmode=SINGLE)
+        # Instantiating Listbox with fixed size, single selection, not exporting selection to avoid bugs
+        lst_entry = Listbox(f_main, height=20, width=41, selectmode=SINGLE, exportselection=False)
         lst_entry.grid(column=0, row=2, pady=10, padx=10)
 
         # Instantiating Calendar, default date to today's date
@@ -110,45 +110,48 @@ class User:
 
         # Column 1 -> Middle
         l_title = Label(f_main, text="My thoughts:", anchor="center", font=("Arial", 10))
-        l_title.grid(column=1, row=1, padx=10, pady=10, sticky="nsew", columnspan=2)
+        l_title.grid(column=1, row=1, padx=10, pady=10, sticky="nsew", columnspan=3)
 
         # Instantiating Text Box (entry_column1) with Scrollbar, fixed size
         e_c1 = tkinter.scrolledtext.ScrolledText(f_main, wrap=tkinter.WORD, width=70, height=20)
-        e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=2)
+        e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=3)
 
         # Calling external function to update calendar and retrieve entries from DB
         b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.multi(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
 
+        # Button to Clear and Create new Entry
+        b_new_entry = ttk.Button(f_main, text="New", command=lambda: self.new_entry(e_c1), state="disabled")
+        b_new_entry.grid(column=1, row=4)
         # Button to Save current entry
         b_save = ttk.Button(f_main, text="Save", command=lambda: self.save_entry(
             e_c1, None if not self.current_selection_id else self.current_selection_id), width=20)
-        b_save.grid(column=1, row=4)
+        b_save.grid(column=2, row=4)
 
         # Column 2
-        b_clear = ttk.Button(f_main, text="Clear", command=lambda: clear_entry(e_c1), width=20)
-        b_clear.grid(column=2, row=4)
+        b_clear = ttk.Button(f_main, text="Clear", command=lambda: self.clear_entry(e_c1), width=20)
+        b_clear.grid(column=3, row=4)
 
         # Column 3
         # Create new frame
         f_c3 = Frame(f_main, padx=3, pady=10)
-        f_c3.grid(column=3, row=2, sticky="nsew")
+        f_c3.grid(column=4, row=2, sticky="nsew")
 
         # Calling External function to save
         b_pdf = ttk.Button(f_c3, text="Save to PDF", command=lambda: self.print_pdf("save", e_c1, cal), width=20)
-        b_pdf.grid(column=3, row=1)
+        b_pdf.grid(column=4, row=1)
 
         # Calling External function to print
         b_print = ttk.Button(f_c3, text="Print", command=lambda: self.print_pdf("print", e_c1, cal), width=20)
-        b_print.grid(column=3, row=2)
+        b_print.grid(column=4, row=2)
 
         b_email = ttk.Button(f_c3, text="Send as E-mail", command=lambda: self.print_pdf("email", e_c1, cal), width=20)
-        b_email.grid(column=3, row=3)
+        b_email.grid(column=4, row=3)
 
         # Row 6 - Footer
         # Footer Frame
         f_footer = ttk.Frame(f_main, padding=(3, 3, 12, 12), borderwidth=3, relief="sunken")
-        f_footer.grid(column=0, row=6, sticky="nsew", columnspan=4)
+        f_footer.grid(column=0, row=6, sticky="nsew", columnspan=5)
 
         f_footer.columnconfigure(0, weight=1)  # Set footer column 0 to fill all frame width
 
@@ -157,6 +160,17 @@ class User:
         l_footer.grid(column=0, row=0, sticky="nsew")
         l_phrase = Label(f_footer, text=str(motivate()), anchor="center", font=("Arial", 16))  # External function
         l_phrase.grid(column=0, row=1, sticky="nsew", pady=5)
+
+    # Method to clear and begin a new entry
+    def new_entry(self, text_box: Text):
+        self.current_selection_entry = None
+        self.current_selection_id = None
+        text_box.delete("1.0", END)
+
+    # Method to clear, but keep track of actual Entry indexes
+    @staticmethod
+    def clear_entry(self, box: Text):
+        box.delete("1.0", END)
 
     def change_info(self, command: str):
 
@@ -486,10 +500,6 @@ class Entries:
         self.entry_id = e_id
         self.entry = e
         self.date = d
-
-
-def clear_entry(box: Text):
-    box.delete("1.0", END)
 
 
 def about(root: Tk):
