@@ -180,8 +180,6 @@ class User:
             Label(f_popup, text="Current Password:").grid(column=0, row=1)
             Label(f_popup, text="New Password:").grid(column=0, row=2)
             Label(f_popup, text="Confirm Password:").grid(column=0, row=3)
-            l_return = Label(f_popup, text="", anchor="center")
-            l_return.grid(column=0, row=5, columnspan=2)
 
             Entry(f_popup, textvariable=curr_pass, show="*", width=30).grid(column=1, row=1)
             Entry(f_popup, textvariable=new_pass, show="*", width=30).grid(column=1, row=2)
@@ -201,16 +199,16 @@ class User:
                 u_pass = fernet.decrypt(h_pass).decode()
 
                 if o_pass != u_pass:
-                    l_return.configure(text="Password inserted does Not match current password")
+                    messagebox.showinfo("Info", "Password inserted does Not match current password")
                 elif n_pass == o_pass:
-                    l_return.configure(text="New password can Not be the same as the current password")
+                    messagebox.showinfo("Info", "New password can Not be the same as the current password")
                 elif n_pass != c_pass:
-                    l_return.configure(text="Passwords do Not match")
+                    messagebox.showinfo("Info", "Passwords do Not match")
                 else:
                     nh_pass = fernet.encrypt(n_pass.encode())  # Hashed new password
                     db.execute("UPDATE accounts SET hashed_password = ? WHERE account = ?", (nh_pass, acc,))
                     db.commit()
-                    l_return.configure(text="Password changed Successfully!")
+                    messagebox.showinfo("Success", "Passowrd changed successfully")
                     bt_s.destroy()
                     bt_c.destroy()
                     b_temp = ttk.Button(w, text="Close", command=w.destroy, width=20)
