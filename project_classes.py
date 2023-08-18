@@ -73,12 +73,13 @@ class User:
 
         # Use image as icon for password change, resized, antialiasing.
         # Set to be an attribute of class due to python's garbage collection
-        m_menu.pass_icon = ImageTk.PhotoImage(Image.open("password.png").resize((12, 12), Image.Resampling.LANCZOS))
-        # TODO: Create icon for e-mail change menu
+        m_menu.pass_icon = ImageTk.PhotoImage(Image.open("icon_pass.png").resize((12, 12), Image.Resampling.LANCZOS))
+        m_menu.email_icon = ImageTk.PhotoImage(Image.open("icon_email.png").resize((12, 12), Image.Resampling.LANCZOS))
 
         m_menu.add_command(label="Change Password",
-                           command=lambda: self.change_info("pass"), image=m_menu.pass_icon, compound='left')
-        m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
+                           command=lambda: self.change_info("pass"), image=m_menu.pass_icon, compound="left")
+        m_menu.add_command(label="Change E-mail",
+                           command=lambda: self.change_info("email"), image=m_menu.email_icon, compound="left")
 
         m_help = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Help", menu=m_help, underline=0)
@@ -152,9 +153,9 @@ class User:
         b_clear.grid(column=3, row=4)
         createtooltip(b_clear, text="Clears box and keeps editing current entry")
 
-        ############
-        # Column 4 #
-        ############
+        #####################
+        # Column 4 -> Right #
+        #####################
 
         # Create new frame
         f_c3 = Frame(f_main, padx=3, pady=10)
