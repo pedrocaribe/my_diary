@@ -95,6 +95,8 @@ class User:
         m_contact.linkedin_icon = icon("icon_linkedin.png")
 
         menubar.add_cascade(label="Help", menu=m_help, underline=0)
+
+        # Add submenus
         m_help.add_cascade(label="Contact", menu=m_contact)
         m_contact.add_command(
             label="E-mail",
