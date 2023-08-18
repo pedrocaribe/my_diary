@@ -62,32 +62,18 @@ class User:
                    "entry TEXT, "
                    "date DATE);")
 
-        # Function to create tooltips whenever hovering over widgets
-        def createtooltip(widget, text):
-            tooltip = ToolTip(widget)
-
-            def enter(event):
-                tooltip.showtip(text)
-
-            def leave(event):
-                tooltip.hidetip()
-
-            widget.bind('<Enter>', enter)
-            widget.bind('<Leave>', leave)
-
         # Create Window Menu
         menubar = Menu(root)
         root.config(menu=menubar)
 
-        # Use image as icon, resized
-        img = Image.open("password.png").resize((10, 10))
-        img = ImageTk.PhotoImage(img)
+        # Use image as icon for password change, resized, antialiasing
+        pass_icon = ImageTk.PhotoImage(Image.open("password.png").resize((10, 10), Image.Resampling.LANCZOS))
 
         # Create menu and add cascade for account options
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
         m_menu.add_command(label="Change Password",
-                           command=lambda: self.change_info("pass"), image=img, compound='left')
+                           command=lambda: self.change_info("pass"), image=pass_icon, compound='left')
         m_menu.add_command(label="Change E-mail", command=lambda: self.change_info("email"))
 
         m_help = Menu(menubar, tearoff=0)
@@ -102,7 +88,10 @@ class User:
         title = Label(f_main, text="My Diary", anchor="center", pady=3, font=("Arial", 18), relief="sunken")
         title.grid(column=0, row=0, sticky="nsew", columnspan=5)
 
-        # Column 0 -> Left
+        ####################
+        # Column 0 -> Left #
+        ####################
+
         c0_title = Label(f_main, text=f"Entries for the Date:", anchor="center", font=("Arial", 10))
         c0_title.grid(column=0, row=1, sticky="nsew", padx=(10, 10))
 
@@ -120,7 +109,14 @@ class User:
         l_date = Label(f_main, text="")
         l_date.grid(column=0, row=5)
 
-        # Column 1 -> Middle
+        # Calling external function to update calendar and retrieve entries from DB
+        b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.get_entries(cal, l_date, lst_entry, e_c1))
+        b_cal.grid(column=0, row=4)
+
+        ############
+        # Column 1 #
+        ############
+
         l_title = Label(f_main, text="My thoughts:", anchor="center", font=("Arial", 10))
         l_title.grid(column=1, row=1, padx=10, pady=10, sticky="nsew", columnspan=3)
 
@@ -128,14 +124,14 @@ class User:
         e_c1 = tkinter.scrolledtext.ScrolledText(f_main, wrap=tkinter.WORD, width=70, height=20)
         e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=3)
 
-        # Calling external function to update calendar and retrieve entries from DB
-        b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.populate(cal, l_date, lst_entry, e_c1))
-        b_cal.grid(column=0, row=4)
-
         # Button to Clear and Create new Entry
         b_new_entry = ttk.Button(f_main, text="New", command=lambda: self.new_entry(e_c1))
         b_new_entry.grid(column=1, row=4)
         createtooltip(b_new_entry, text="Clears box and creates new entry")
+
+        ############
+        # Column 2 #
+        ############
 
         # Button to Save current entry
         b_save = ttk.Button(f_main, text="Save", command=lambda: self.save_entry(
@@ -143,12 +139,19 @@ class User:
         b_save.grid(column=2, row=4)
         createtooltip(b_save, text="Saves box content")
 
-        # Column 2
+        ############
+        # Column 3 #
+        ############
+
+        # Button to clear text box
         b_clear = ttk.Button(f_main, text="Clear", command=lambda: self.clear_entry(e_c1), width=20)
         b_clear.grid(column=3, row=4)
         createtooltip(b_clear, text="Clears box and keeps editing current entry")
 
-        # Column 3
+        ############
+        # Column 4 #
+        ############
+
         # Create new frame
         f_c3 = Frame(f_main, padx=3, pady=10)
         f_c3.grid(column=4, row=2, sticky="nsew")
@@ -164,7 +167,10 @@ class User:
         b_email = ttk.Button(f_c3, text="Send as E-mail", command=lambda: self.print_pdf("email", e_c1, cal), width=20)
         b_email.grid(column=4, row=3)
 
-        # Row 6 - Footer
+        ##################
+        # Row 6 - Footer #
+        ##################
+
         # Footer Frame
         f_footer = ttk.Frame(f_main, padding=(3, 3, 12, 12), borderwidth=3, relief="sunken")
         f_footer.grid(column=0, row=6, sticky="nsew", columnspan=5)
@@ -286,7 +292,7 @@ class User:
             db.commit()
 
     # Method to populate listbox and entry box
-    def populate(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
+    def get_entries(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         # Variable assignment for readability
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")
@@ -372,7 +378,7 @@ class User:
                 self.entry_title(entry_date)
                 self.entry_body(txt)
 
-        text = entry.get("1.0", END)
+        text = entry.get("1.0", 'end-1c')
         text_date = cal.get_date()
         pdf = PDF(orientation="portrait", format="A4")
         pdf.set_margin(10)
@@ -383,18 +389,21 @@ class User:
         output_name = f"exported_diary_{text_date}.pdf"
 
         if command == "save":
-            try:
-                pdf.output(
-                    filedialog.asksaveasfilename(
-                        initialdir="/",
-                        initialfile=output_name,
-                        title="Select Folder",
-                        filetypes=(("PDF File", "*.pdf"), ("all files", "*.*")),
-                        defaultextension=".pdf"
+            if len(text) > 1:
+                try:
+                    pdf.output(
+                        filedialog.asksaveasfilename(
+                            initialdir="/",
+                            initialfile=output_name,
+                            title="Select Folder",
+                            filetypes=(("PDF File", "*.pdf"), ("all files", "*.*")),
+                            defaultextension=".pdf"
+                        )
                     )
-                )
-            except Exception as e:
-                messagebox.showerror("Error", str(e))
+                except Exception as e:
+                    messagebox.showerror("Error", str(e))
+            else:
+                messagebox.showinfo("Info", "There is nothing to be saved")
 
         elif command == "print":
             # Check if there is text to be printed
@@ -554,3 +563,17 @@ def about(root: Tk):
 def motivate():
     url = "https://complimentr.com/api"
     return (json.loads(requests.get(url).text))['compliment'].capitalize()
+
+
+# Function to create tooltips whenever hovering over widgets
+def createtooltip(widget, text):
+    tooltip = ToolTip(widget)
+
+    def enter(event):
+        tooltip.showtip(text)
+
+    def leave(event):
+        tooltip.hidetip()
+
+    widget.bind('<Enter>', enter)
+    widget.bind('<Leave>', leave)
