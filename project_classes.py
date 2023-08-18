@@ -95,7 +95,7 @@ class User:
         c0_title.grid(column=0, row=1, sticky="nsew", padx=(10, 10))
 
         # Instantiating Listbox with fixed size
-        lst_entry = Listbox(f_main, height=20, width=41)
+        lst_entry = Listbox(f_main, height=20, width=41, selectmode=SINGLE)
         lst_entry.grid(column=0, row=2, pady=10, padx=10)
 
         # Instantiating Calendar, default date to today's date
@@ -117,8 +117,7 @@ class User:
         e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=2)
 
         # Calling external function to update calendar and retrieve entries from DB
-        b_cal = ttk.Button(f_main, text="Get Entries",
-                           command=lambda: self.multi(cal, l_date, lst_entry, e_c1))
+        b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.multi(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
 
         # Button to Save current entry
@@ -429,11 +428,10 @@ class User:
 
     def fill_list(self, lb: Listbox, selected_date):
 
+        # Variable assignement for easier referencing
         acc = self.username
-        # Add entries to Listbox and create a list of entries
-        entries_list = []
-
         db = self.db
+
         # Retrieve entries from DB for the specified user and date
         entries = db.execute("SELECT entries.entry_id, entries.entry, entries.date "
                              "FROM entries "
@@ -442,9 +440,11 @@ class User:
                              "WHERE accounts.account = ? "
                              "AND entries.date = ?", (acc, selected_date,)).fetchall()
 
-        # Clear entries from Listbox and allow single selection
+        # Clear entries from Listbox
         lb.delete(0, tkinter.END)
-        lb.config(selectmode=SINGLE)
+
+        # Add entries to Listbox and create a list of entries
+        entries_list = []
 
         for count, entry in list(enumerate(entries)):
             entry_temp = Entries(count, entry[0], entry[1], entry[2])
