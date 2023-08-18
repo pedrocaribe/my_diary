@@ -297,7 +297,7 @@ class User:
             sel_index = lb.curselection()[0]  # User selected entry's index
             sel_entry = next(_ for _ in entries_list if _.count_id == sel_index)
             sel_entry.entry = re.sub(r"\n$", "", sel_entry.entry)
-            text = re.sub(r"\n$", "", text_box.get("1.0", END))
+            text = text_box.get("1.0", "end-1c")
 
             if len(text) > 1:
                 if text != self.current_selection_entry:
@@ -488,7 +488,7 @@ class User:
 
     def save_entry(self, entry_box: Text, index=None):
         acc = self.username
-        text = entry_box.get("1.0", END)
+        text = entry_box.get("1.0", "end-1c")
         db = self.db
         acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (acc,)).fetchone()
         try:
@@ -496,11 +496,11 @@ class User:
                 db.execute("UPDATE entries "
                            "SET entry = ? "
                            "WHERE entry_id = ? "
-                           "AND account_id = ?", (re.sub(r"\n$", "", text), index, acc_id[0]))
+                           "AND account_id = ?", (text, index, acc_id[0]))
             else:
                 db.execute("INSERT INTO entries (account_id, entry, date) "
                            "VALUES (?, ?, ?)",
-                           (acc_id[0], re.sub("\n$", "", text), date.today(),))
+                           (acc_id[0], text, date.today(),))
             db.commit()
         except Exception as e:
             messagebox.showerror("Error", f"Failed, contact Administrator.\n{e}")
@@ -520,6 +520,8 @@ class Entries:
         self.date = d
 
 
+# Source: https://stackoverflow.com/questions/20399243/
+#   display-message-when-hovering-over-something-with-mouse-cursor-in-python
 class ToolTip(object):
 
     def __init__(self, widget):
