@@ -210,10 +210,6 @@ class User:
                     db.commit()
                     messagebox.showinfo("Success", "Password changed successfully")
                     w_popup.destroy()
-                    # bt_s.destroy()
-                    # bt_c.destroy()
-                    # b_temp = ttk.Button(w, text="Close", command=w.destroy, width=20)
-                    # b_temp.grid(column=0, row=4, padx=5, pady=(10, 0), columnspan=2)
 
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
