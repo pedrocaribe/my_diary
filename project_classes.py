@@ -30,8 +30,7 @@ class User:
         self.hashed_passwd = hashed_pass
         self.hash_key = key
         self.root = root
-        self.current_selection_entry = None
-        self.current_selection_id = None
+        self.current_selection_entry = self.current_selection_id = None
 
     def main_window(self):
         # Force main window to open in center of screen
@@ -62,6 +61,19 @@ class User:
                    "entry_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                    "entry TEXT, "
                    "date DATE);")
+
+        # Function to create tooltips whenever hovering over widgets
+        def createtooltip(widget, text):
+            tooltip = ToolTip(widget)
+
+            def enter(event):
+                tooltip.showtip(text)
+
+            def leave(event):
+                tooltip.hidetip()
+
+            widget.bind('<Enter>', enter)
+            widget.bind('<Leave>', leave)
 
         # Create Window Menu
         menubar = Menu(root)
@@ -121,16 +133,20 @@ class User:
         b_cal.grid(column=0, row=4)
 
         # Button to Clear and Create new Entry
-        b_new_entry = ttk.Button(f_main, text="New", command=lambda: self.new_entry(e_c1), state="disabled")
+        b_new_entry = ttk.Button(f_main, text="New", command=lambda: self.new_entry(e_c1))
         b_new_entry.grid(column=1, row=4)
+        createtooltip(b_new_entry, text="Clears box and creates new entry")
+
         # Button to Save current entry
         b_save = ttk.Button(f_main, text="Save", command=lambda: self.save_entry(
             e_c1, None if not self.current_selection_id else self.current_selection_id), width=20)
         b_save.grid(column=2, row=4)
+        createtooltip(b_save, text="Saves box content")
 
         # Column 2
         b_clear = ttk.Button(f_main, text="Clear", command=lambda: self.clear_entry(e_c1), width=20)
         b_clear.grid(column=3, row=4)
+        createtooltip(b_clear, text="Clears box and keeps editing current entry")
 
         # Column 3
         # Create new frame
@@ -163,12 +179,14 @@ class User:
 
     # Method to clear and begin a new entry
     def new_entry(self, text_box: Text):
-        self.current_selection_entry = None
-        self.current_selection_id = None
-        text_box.delete("1.0", END)
+        res = messagebox.askyesno("Confirmation", "Are you sure you would like to create a new entry?\n"
+                                  "All current text in the text box will be lost.")
+        if res:
+            self.current_selection_entry = None
+            self.current_selection_id = None
+            text_box.delete("1.0", END)
 
     # Method to clear, but keep track of actual Entry indexes
-    @staticmethod
     def clear_entry(self, box: Text):
         box.delete("1.0", END)
 
@@ -488,7 +506,7 @@ class User:
             messagebox.showerror("Error", f"Failed, contact Administrator.\n{e}")
         else:
             messagebox.showinfo("Success", "Entry Saved.")
-            clear_entry(entry_box)
+            self.clear_entry(entry_box)
 
     def __str__(self):
         return [self.id, self.username, self.f_name, self.l_name]
@@ -500,6 +518,38 @@ class Entries:
         self.entry_id = e_id
         self.entry = e
         self.date = d
+
+
+class ToolTip(object):
+
+    def __init__(self, widget):
+        self.widget = widget
+        self.tipwindow = None
+        self.id = None
+        self.x = self.y = 0
+        self.text = None
+
+    def showtip(self, text):
+        # "Display text in tooltip window"
+        self.text = text
+        if self.tipwindow or not self.text:
+            return
+        x, y, cx, cy = self.widget.bbox("insert")
+        x = x + self.widget.winfo_rootx() + 70
+        y = y + cy + self.widget.winfo_rooty() + 27
+        self.tipwindow = tw = Toplevel(self.widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry("+%d+%d" % (x, y))
+        label = Label(tw, text=self.text, justify=LEFT,
+                      background="#ffffe0", relief=SOLID, borderwidth=1,
+                      font=("tahoma", "8", "normal"))
+        label.pack(ipadx=1)
+
+    def hidetip(self):
+        tw = self.tipwindow
+        self.tipwindow = None
+        if tw:
+            tw.destroy()
 
 
 def about(root: Tk):
