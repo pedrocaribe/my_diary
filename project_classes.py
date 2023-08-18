@@ -14,6 +14,7 @@ import requests
 from fpdf import FPDF
 import json
 from PIL import Image, ImageTk
+import webbrowser
 
 
 class User:
@@ -71,18 +72,42 @@ class User:
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
 
-        # Use image as icon for password change, resized, antialiasing.
-        # Set to be an attribute of class due to python's garbage collection
-        m_menu.pass_icon = ImageTk.PhotoImage(Image.open("icon_pass.png").resize((12, 12), Image.Resampling.LANCZOS))
-        m_menu.email_icon = ImageTk.PhotoImage(Image.open("icon_email.png").resize((12, 12), Image.Resampling.LANCZOS))
+        # Icons for m_menu definitions
+        m_menu.pass_icon = icon("icon_pass.png")
+        m_menu.email_icon = icon("icon_email.png")
 
+        # Add commands to m_menu menu
         m_menu.add_command(label="Change Password",
                            command=lambda: self.change_info("pass"), image=m_menu.pass_icon, compound="left")
         m_menu.add_command(label="Change E-mail",
                            command=lambda: self.change_info("email"), image=m_menu.email_icon, compound="left")
 
+        # Create menu and add cascade for help options
         m_help = Menu(menubar, tearoff=0)
+        m_contact = Menu(tearoff=0)  # No parent/master
+
+        # Add properties to store fixed values
+        m_contact.creator_email = "pho.caribe@gmail.com"
+        m_contact.linkedin = "https://www.linkedin.com/in/pedro-caribe/"
+
+        # Icon for m_contact definitions
+        m_contact.email_icon = icon("icon_email_contact.png")
+        m_contact.linkedin_icon = icon("icon_linkedin.png")
+
         menubar.add_cascade(label="Help", menu=m_help, underline=0)
+        m_help.add_cascade(label="Contact", menu=m_contact)
+        m_contact.add_command(
+            label="E-mail",
+            command=lambda: webbrowser.open(
+                                    f"mailto:?to={m_contact.creator_email}&subject=Feedback on My Diary", new=1),
+            image=m_contact.email_icon, compound="left"
+        )
+        m_contact.add_command(
+            label="LinkedIn",
+            command=lambda: webbrowser.open(m_contact.linkedin),
+            image=m_contact.linkedin_icon, compound="left"
+        )
+
         m_help.add_command(label="About", command=lambda: about(root))
 
         # Create main window frame
@@ -582,3 +607,7 @@ def createtooltip(widget, text):
 
     widget.bind('<Enter>', enter)
     widget.bind('<Leave>', leave)
+
+
+def icon(icon_file):
+    return ImageTk.PhotoImage(Image.open(icon_file).resize((12, 12), Image.Resampling.LANCZOS))
