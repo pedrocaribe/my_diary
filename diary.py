@@ -179,6 +179,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
             This function does Not return anything.
         """
 
+        # Information fetching
         parent = w_reg  # reassigned variable name for easier understanding within scope
         first = first_str.get()
         last = last_str.get()
