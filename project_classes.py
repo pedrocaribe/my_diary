@@ -281,6 +281,16 @@ class User:
         box.delete("1.0", END)
 
     def change_info(self, command: str):
+        """Change user info in DB
+
+        Method used to change user info such as password and e-mail registered in DB.
+
+        Args:
+            command: Command to differentiate method functionality.
+
+        Return:
+            This method does Not return anything.
+        """
 
         # Variable assignment for easier understanding
         acc = self.username
