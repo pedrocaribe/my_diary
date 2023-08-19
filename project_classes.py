@@ -363,8 +363,10 @@ class User:
             b_submit = ttk.Button(f_popup, text="Submit", command=changepass, width=20)
             b_submit.grid(column=0, row=4, padx=5, pady=(10, 0))
 
-        # Change e-mail << STILL TO IMPLEMENT >>
+        # Change e-mail
         elif command == "email":
+            # TODO: Implement this part to add the ability to change e-mail registered to user.
+
             w_popup.destroy()
             messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
 
