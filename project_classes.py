@@ -288,7 +288,7 @@ class User:
         Args:
             command: Command to differentiate method functionality.
 
-        Return:
+        Returns:
             This method does Not return anything.
         """
 
@@ -325,6 +325,11 @@ class User:
             Entry(f_popup, textvariable=conf_pass, show="*", width=30).grid(column=1, row=3)
 
             def changepass():
+                """Change user password
+
+                Nested function to act when event is sent from change_info method, from
+                submit button
+                """
                 o_pass = curr_pass.get()  # Old password
                 n_pass = new_pass.get()  # New password
                 c_pass = conf_pass.get()  # Confirmation password
