@@ -16,7 +16,30 @@ import webbrowser
 
 
 class User:
+    """User class
+
+    User class to be initialized when user logs in, contains several attributes.
+
+    Attributes:
+        id: A string containing account id under DB.
+        username: A string containing username.
+        f_name: A string containing user's first name.
+        l_name: A string containing user's last name.
+        hashed_passwd: A string containing hashed password.
+        hash_key: A string containing hash key.
+        root: The root window in which main window will be confirmed.
+        current_selection_entry: A string containing the old entry's text to
+            be compared with actual entry when changed
+        current_selection_id: An integer representing old the entry's id to
+         be compared with actual entry's id when changed
+    """
     def __init__(self, root: Tk, user):
+        """Initialized the user based on successful login.
+
+        Parameters:
+            root: Root Tk window in which to display the main window frame.
+            user: username provided by user after successfully logging in.
+        """
         self.db = sqlite3.connect("diary.db")
         db_id, username, first_name, last_name, hashed_pass, key = self.db.execute("SELECT * "
                                                                                    "FROM accounts "
