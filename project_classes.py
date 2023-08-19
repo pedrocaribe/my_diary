@@ -373,7 +373,6 @@ class User:
 
     # Garbage collector, to delete any empty entries from DB
     def garbage_collector(self):
-
         """Garbage collector on DB
 
         Method used to delete any empty entries from DB, which may include only:
