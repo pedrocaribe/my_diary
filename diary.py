@@ -87,7 +87,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
                 "hashed_password BLOB, "
                 "key_verification BLOB)")
 
-    # Check if user provided already exists in DB
+    # Check if account provided by user already exists in DB
     check = cur.execute("SELECT * FROM accounts WHERE account = ?", (acc,)).fetchone()
 
     # Create return label for posterior checks
@@ -96,27 +96,27 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
 
     # Login Checks
     if not acc:
-        l_return.configure(text="Account cannot be blank")  # If user doesn't insert account name
+        l_return.configure(text="Account cannot be blank")  # If user doesn't provide account name
     elif not check:
-        l_return.configure(text="Invalid account, please register")  # If account not registered
+        l_return.configure(text="Invalid account, please register")  # If account not registered in DB
         b_register = ttk.Button(parent, text="Register", command=lambda: create_login(db, l_return, b_register))
         b_register.grid(column=0, row=3, pady=(10, 0))
 
-    # If user is already registered, decrypt password provided with stored hash key and confirm login information
+    # If account was found in DB, decrypt password provided with stored hash key and confirm login information
     else:
         hashed_pass = check[4]
         key = check[5]
         fernet = Fernet(key)
-        unhashed_pass = fernet.decrypt(hashed_pass).decode()
+        raw_pass = fernet.decrypt(hashed_pass).decode()
 
         # Compare password provided with decrypted password
-        if unhashed_pass == passwd:
+        if raw_pass == passwd:
             l_return.configure(text="Login Successful")
 
-            # If successful login, destroy toplevel window and show main
+            # If login successful, destroy toplevel window and show main
             w_tl.destroy()
             user = User(w_root, acc)
-            user.garbage_collector()
+            user.garbage_collector()  # Run garbage collector to clean-up empty entries in DB
             user.main_window()
             w_root.deiconify()
         else:
@@ -124,6 +124,16 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
 
 
 def create_login(db, l_back_window: Label, b_reg: ttk.Button):
+    """Create login if user not found in DB.
+
+    Args:
+        db: Database in which user will be registered.
+        l_back_window: Label to give a registration feedback to user
+        b_reg: Button to disable onde registration is complete
+
+    Returns:
+        This functions does Not return anything.
+    """
 
     # Create new window for registration fields
     w_reg = Toplevel()
