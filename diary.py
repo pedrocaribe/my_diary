@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import sqlite3
 from cryptography.fernet import Fernet
+from PIL import Image, ImageTk
 
 
 from project_classes import User
@@ -32,25 +33,25 @@ def main(root):
     f_pass.grid(column=0, row=0, sticky="nsew")
 
     l_title = ttk.Label(f_pass, text="Please enter your credentials", anchor="center")
-    l_title.grid(column=0, row=0, columnspan=3, sticky="nsew")
+    l_title.grid(column=0, row=1, columnspan=3, sticky="nsew", pady=(5, 10))
 
-    Label(f_pass, text="Account:").grid(column=0, row=1, sticky=W, padx=5)
-    Label(f_pass, text="Password:").grid(column=0, row=2, sticky=W, padx=5)
+    Label(f_pass, text="Account:").grid(column=0, row=2, sticky=W, padx=5)
+    Label(f_pass, text="Password:").grid(column=0, row=3, sticky=W, padx=5)
 
     acc_str = StringVar()
     pw_str = StringVar()
 
     e_acc = ttk.Entry(f_pass, textvariable=acc_str)
-    e_acc.grid(column=1, row=1, columnspan=2, sticky="nsew")
+    e_acc.grid(column=1, row=2, columnspan=2, sticky="nsew")
     e_acc.focus()
 
-    ttk.Entry(f_pass, textvariable=pw_str, show='*').grid(column=1, row=2, columnspan=2, sticky="nsew")
+    ttk.Entry(f_pass, textvariable=pw_str, show='*').grid(column=1, row=3, columnspan=2, sticky="nsew")
 
     b_submit = ttk.Button(f_pass, text="Submit", command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, root))
-    b_submit.grid(column=1, row=3, pady=(10, 0))
+    b_submit.grid(column=1, row=4, pady=(10, 0))
 
     b_close = ttk.Button(f_pass, text="Close", command=root.destroy)
-    b_close.grid(column=2, row=3, pady=(10, 0))
+    b_close.grid(column=2, row=4, pady=(10, 0))
 
 
 def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Frame, w_root: Tk):

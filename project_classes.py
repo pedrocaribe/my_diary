@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, ttk, scrolledtext
 from tkcalendar import Calendar
 from cryptography.fernet import Fernet
 from datetime import date
@@ -9,7 +9,6 @@ from PIL import Image, ImageTk
 import win32api
 import win32print
 import sqlite3
-import tkinter.scrolledtext
 import re
 import requests
 import json
@@ -154,7 +153,7 @@ class User:
         l_title.grid(column=1, row=1, padx=10, pady=10, sticky="nsew", columnspan=3)
 
         # Instantiating Text Box (entry_column1) with Scrollbar, fixed size
-        e_c1 = tkinter.scrolledtext.ScrolledText(f_main, wrap=tkinter.WORD, width=70, height=20)
+        e_c1 = scrolledtext.ScrolledText(f_main, wrap=WORD, width=70, height=20)
         e_c1.grid(column=1, row=2, padx=2, pady=10, sticky="nsew", rowspan=2, columnspan=3)
 
         # Button to Clear and Create new Entry
@@ -498,8 +497,8 @@ class User:
                              "AND entries.date = ?", (acc, selected_date,)).fetchall()
 
         # Clear entries from Listbox
-        lb.delete(0, tkinter.END)
-        lb.selection_clear(0, tkinter.END)
+        lb.delete(0, END)
+        lb.selection_clear(0, END)
 
         # Add entries to Listbox and create a list of entries
         entries_list = []
