@@ -166,6 +166,18 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
 
     # Definition of function for registration process
     def register():
+        """Register user to DB
+
+        This Function has responsibility to check DB and confirm
+        if user provided is existent or not and if all fields were
+        entered by user.
+
+        Args:
+            This function takes no arguments.
+
+        Returns:
+            This function does Not return anything.
+        """
 
         parent = w_reg  # reassigned variable name for easier understanding within scope
         first = first_str.get()
