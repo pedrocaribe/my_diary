@@ -204,7 +204,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
         if passwd != conf_passwd:
             l_register.configure(text="Passwords do Not match")
 
-        # If all checks passed, register user after encrypting password by committing to DB
+        # If all checks passed, register user after encrypting password, by committing to DB
         else:
             key = Fernet.generate_key()
             fernet = Fernet(key)
