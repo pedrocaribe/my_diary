@@ -246,14 +246,13 @@ class User:
         l_phrase.grid(column=0, row=1, sticky="nsew", pady=5)
 
     def new_entry(self, text_box: Text):
-        """Method to clear box and begin a new entry.
+        """Clear box and begin a new entry.
 
         Method used to clear the actual entry within the scrolledtext Text box,
-        maintaining the index of the actual entry, or to begin a new entry with
-        a new index.
+        without maintaining the index of the actual entry.
 
         Args:
-            text_box: Text used to create the new entry
+            text_box: Text box used to create the new entry.
 
         Returns:
             This method does Not return anything.
@@ -266,8 +265,19 @@ class User:
             self.current_selection_id = None
             text_box.delete("1.0", END)
 
-    # Method to clear, but keep track of actual Entry indexes
     def clear_entry(self, box: Text):
+        """Clear box and keep entry index
+
+        Method used to clear the actual entry within the scrolledtext Text box,
+        maintaining the entry's index, and giving the user the option to save a
+        new value to this entry.
+
+        Args:
+            box: Text box in which text is being editted.
+
+        Returns:
+            This method does Not return anything.
+        """
         box.delete("1.0", END)
 
     def change_info(self, command: str):
