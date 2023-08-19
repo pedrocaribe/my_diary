@@ -142,7 +142,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
     w_reg.configure(pady=10, padx=10)
     w_reg.resizable(False, False)
 
-    # Create fields and variables for fetching data inputted from user
+    # Create fields and variables for fetching data inputted by user
     Label(w_reg, text="First Name:").grid(column=0, row=1)
     Label(w_reg, text="Last Name:").grid(column=0, row=2)
     Label(w_reg, text="Account:").grid(column=0, row=3)
