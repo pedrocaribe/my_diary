@@ -41,12 +41,14 @@ def main(root):
     acc_str = StringVar()
     pw_str = StringVar()
 
+    # Entry fields, cursor on account field
     e_acc = ttk.Entry(f_pass, textvariable=acc_str)
     e_acc.grid(column=1, row=2, columnspan=2, sticky="nsew")
     e_acc.focus()
 
     ttk.Entry(f_pass, textvariable=pw_str, show='*').grid(column=1, row=3, columnspan=2, sticky="nsew")
 
+    # Submit and cancel buttons
     b_submit = ttk.Button(f_pass, text="Submit", command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, root))
     b_submit.grid(column=1, row=4, pady=(10, 0))
 
