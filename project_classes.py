@@ -101,7 +101,7 @@ class User:
         m_menu = Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Options", menu=m_menu, underline=0)
 
-        # Icons for m_menu definitions
+        # Icons for m_menu commands
         m_menu.pass_icon = icon("icon_pass.png")
         m_menu.email_icon = icon("icon_email.png")
 
