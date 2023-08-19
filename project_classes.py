@@ -34,7 +34,7 @@ class User:
          be compared with actual entry's id when changed
     """
     def __init__(self, root: Tk, user):
-        """Initialized the user based on successful login.
+        """Initializes the user based on successful login.
 
         Args:
             root: Root Tk window in which to display the main window frame.
@@ -56,6 +56,13 @@ class User:
         self.current_selection_entry = self.current_selection_id = None
 
     def main_window(self):
+        """Application's main window
+
+        Window used to display all Widgets after successfully logging in.
+
+        Returns:
+             This method does Not return anything.
+        """
 
         # Force main window to open in center of screen
         root = self.root
