@@ -57,6 +57,22 @@ def main(root):
 
 
 def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Frame, w_root: Tk):
+    """Login Validation
+
+    Validates login information provided by user.
+    Provides feedback to user if account doesn't match DB.
+
+    Args:
+        w_tl: A TopLevel window.
+        acc: A string containing the account name provided by user.
+        passwd: A string containing password provided by user.
+        parent: Frame which will hold all Widgets.
+        w_root: Root window which contains main screen, hidden until login.
+
+    Returns:
+        This functions does Not return anything.
+    """
+
     acc = acc.get()
     passwd = passwd.get()
 
