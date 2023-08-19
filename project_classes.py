@@ -260,7 +260,7 @@ class User:
         """
 
         res = messagebox.askyesno("Confirmation", "Are you sure you would like to create a new entry?\n"
-                                  "All current text in the text box will be lost.")
+                                  "All current text within the text box will be lost!")
         if res:
             self.current_selection_entry = None
             self.current_selection_id = None
