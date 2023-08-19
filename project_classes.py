@@ -116,8 +116,8 @@ class User:
         m_contact = Menu(tearoff=0)  # No parent/master
 
         # Add properties to store fixed values
-        m_contact.creator_email = "pho.caribe@gmail.com"
-        m_contact.linkedin = "https://www.linkedin.com/in/pedro-caribe/"
+        email = "pho.caribe@gmail.com"
+        linkedin = "https://www.linkedin.com/in/pedro-caribe/"
 
         # Icon for m_contact definitions
         m_contact.email_icon = icon("icon_email_contact.png")
@@ -130,12 +130,12 @@ class User:
         m_contact.add_command(
             label="E-mail",
             command=lambda: webbrowser.open(
-                                    f"mailto:?to={m_contact.creator_email}&subject=Feedback on My Diary", new=1),
+                                    f"mailto:?to={email}&subject=Feedback on My Diary", new=1),
             image=m_contact.email_icon, compound="left"
         )
         m_contact.add_command(
             label="LinkedIn",
-            command=lambda: webbrowser.open(m_contact.linkedin),
+            command=lambda: webbrowser.open(linkedin),
             image=m_contact.linkedin_icon, compound="left"
         )
 
@@ -245,8 +245,20 @@ class User:
         l_phrase = Label(f_footer, text=str(motivate()), anchor="center", font=("Arial", 16))  # External function
         l_phrase.grid(column=0, row=1, sticky="nsew", pady=5)
 
-    # Method to clear and begin a new entry
     def new_entry(self, text_box: Text):
+        """Method to clear box and begin a new entry.
+
+        Method used to clear the actual entry within the scrolledtext Text box,
+        maintaining the index of the actual entry, or to begin a new entry with
+        a new index.
+
+        Args:
+            text_box: Text used to create the new entry
+
+        Returns:
+            This method does Not return anything.
+        """
+
         res = messagebox.askyesno("Confirmation", "Are you sure you would like to create a new entry?\n"
                                   "All current text in the text box will be lost.")
         if res:
