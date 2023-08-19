@@ -36,7 +36,7 @@ class User:
     def __init__(self, root: Tk, user):
         """Initialized the user based on successful login.
 
-        Parameters:
+        Args:
             root: Root Tk window in which to display the main window frame.
             user: username provided by user after successfully logging in.
         """
