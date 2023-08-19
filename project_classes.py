@@ -367,16 +367,24 @@ class User:
         elif command == "email":
             # TODO: Implement this part to add the ability to change e-mail registered to user.
 
+            # Destroy popup window
             w_popup.destroy()
             messagebox.showinfo("Unable to proceed", "This feature is still to be implemented.")
 
     # Garbage collector, to delete any empty entries from DB
     def garbage_collector(self):
 
-        """
-        sqlite3 supports REGEXP but does not have it included
-        In order to use it, you have to use parametrized SQL
-        Docs: https://www.sqlite.org/c3ref/create_function.html
+        """Garbage collector on DB
+
+        Method used to delete any empty entries from DB, which may include only:
+            - "\n" -> New lines
+            - "\r" -> Escape characters
+            - "\t" -> Tab characters
+            - " "  -> Space characters
+
+        Sqlite3 supports REGEXP but does not have it included in its package.
+        In order to use it, you have to use parametrized SQL.
+        Docs for Reference: https://www.sqlite.org/c3ref/create_function.html
         """
 
         def regexp(expr, item):
@@ -386,7 +394,7 @@ class User:
         db = self.db
         db.create_function("REGEXP", 2, regexp)
         try:
-            db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n]*$'])
+            db.execute("DELETE FROM entries WHERE entry REGEXP ?", ['^[ \r\n\t]*$'])
         except sqlite3.OperationalError:
             pass
         else:
