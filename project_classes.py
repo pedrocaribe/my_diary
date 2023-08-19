@@ -144,6 +144,7 @@ class User:
         # Calling method to update calendar and retrieve entries from DB
         b_cal = ttk.Button(f_main, text="Get Entries", command=lambda: self.get_entries(cal, l_date, lst_entry, e_c1))
         b_cal.grid(column=0, row=4)
+        createtooltip(b_cal, text="Get entries for selected date")
 
         ############
         # Column 1 #
@@ -290,7 +291,7 @@ class User:
                     messagebox.showinfo("Success", "Password changed successfully")
                     w_popup.destroy()
 
-            # Create buttons to submit or cancel changes
+            # Create buttons to submit or `cancel` changes
             b_cancel = ttk.Button(f_popup, text="Cancel", command=w_popup.destroy, width=20)
             b_cancel.grid(column=1, row=4, padx=5, pady=(10, 0))
             b_submit = ttk.Button(f_popup, text="Submit", command=changepass, width=20)
@@ -332,6 +333,7 @@ class User:
         entries_list = self.fill_list(lb, selected_date)
 
         def selected(event):
+
             sel_index = lb.curselection()[0]  # User selected entry's index
             sel_entry = next(_ for _ in entries_list if _.count_id == sel_index)
             sel_entry.entry = re.sub(r"\n$", "", sel_entry.entry)
@@ -497,6 +499,7 @@ class User:
 
         # Clear entries from Listbox
         lb.delete(0, tkinter.END)
+        lb.selection_clear(0, tkinter.END)
 
         # Add entries to Listbox and create a list of entries
         entries_list = []
@@ -536,15 +539,15 @@ class User:
 
 
 class Entries:
-    def __init__(self, n, e_id, e, d):
-        self.count_id = n
-        self.entry_id = e_id
-        self.entry = e
-        self.date = d
+    def __init__(self, n: int, e_id: int, e: str, d: str):
+        self.count_id = n  # Index on list
+        self.entry_id = e_id  # Index on DB
+        self.entry = e  # Entry's content
+        self.date = d  # Entry's date
 
 
-# Source: https://stackoverflow.com/questions/20399243/
-#   display-message-when-hovering-over-something-with-mouse-cursor-in-python
+# Display-message-when-hovering-over-something-with-mouse-cursor-in-python
+#   Source: https://stackoverflow.com/questions/20399243/
 class ToolTip(object):
 
     def __init__(self, widget):
