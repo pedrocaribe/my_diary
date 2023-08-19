@@ -8,11 +8,20 @@ from project_classes import User
 
 
 def main(root):
+    """Keep record of daily activities, stored in DB and password protected
 
+    My Diary was developed to assist those in need to keep records of their
+    daily activities and thoughts that they would like to keep records of,
+    while maintaining their privacy and possibility to share if they want.
+
+    Typical usage example:
+
+    python3 diary.py
+    """
 
     root.withdraw()  # Hide main window until user is authenticated
 
-    # Create new toplevel window
+    # Create new toplevel window for authentication process
     w_pass = Toplevel()
 
     w_pass.resizable(False, False)
