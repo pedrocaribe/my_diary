@@ -783,6 +783,17 @@ class ToolTip(object):
         self.text = None
 
     def showtip(self, text):
+        """Show tip
+
+        Method used to show the tip with specific formatting close to the specified
+        widget.
+
+        Parameters:
+            text: Text to show within the ToolTip.
+
+        Returns:
+            This method does Not return anything.
+        """
         self.text = text
         if self.tipwindow or not self.text:
             return
