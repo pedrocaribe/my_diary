@@ -906,6 +906,19 @@ class About:
 
 
 def motivate():
+    """Motivate phrase
+
+    Function used to retrieve a motivational phrase to be placed at the
+    footer of the application.
+    Functions uses complimentr public API.
+
+    Parameters:
+        This functions does Not take any parameters.
+
+    Returns:
+        This function returns a text string, capitalized.
+    """
+
     url = "https://complimentr.com/api"
     return (json.loads(requests.get(url).text))['compliment'].capitalize()
 
