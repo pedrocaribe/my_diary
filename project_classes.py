@@ -828,42 +828,78 @@ class ToolTip(object):
 
 
 class About:
+    """Display About window
+
+    About class to be initialized when main window is shown to user.
+    This class contains all informatino about the author of this project,
+    including links and version tracking.
+
+    Attributes:
+        author: A string containing author name.
+        email: A string containing author e-mail address.
+        linkedin: A string containing the url for the author linkedin
+            profile.
+        github: A string containing the url for the author github
+            profile.
+        version: A string containing the version revision of this application.
+        icon: An image, resized and processed as an icon for the logo.
+        email_icon: An image, resized and processed as an icon for email.
+        linkedin_icon: An image, resized and processed as an icon for linkedin.
+    """
+
     def __init__(self):
-        # Add properties to store fixed values
+        """Initializes the About window when main window is shown to user
+
+        Parameters:
+            This object takes no parameters to be initialized.
+        """
+
+        self.author = "Pedro Caribé"
         self.email = "pho.caribe@gmail.com"
         self.linkedin = "https://www.linkedin.com/in/pedro-caribe/"
-        self.author = "Pedro Caribé"
         self.github = "https://github.com/pedrocaribe"
         self.version = "1.00"
+        self.icon = icon("logo.png", 70, 70)
 
-        # Icon for m_contact definitions
         self.email_icon = icon("icon_email_contact.png")
         self.linkedin_icon = icon("icon_linkedin.png")
 
     def window(self, root: Tk):
+        """About window
+
+        Method used to create a new TopLevel containing about information
+        to show to user.
+
+        Parameters:
+            root: Root tk window in which to display the about window frame.
+
+        Returns:
+            This method does Not return anything.
+        """
+
         w_about = Toplevel()
         w_about.resizable(False, False)
         w_about.title("About My Diary")
         f_about = ttk.Frame(w_about, padding=(3, 3, 12, 12))
         f_about.grid(column=0, row=0, sticky="nsew")
 
-        l_title = Label(f_about, text="My Diary", font="Arial 12 bold", justify=LEFT)
-        l_title.grid(column=0, row=0)
+        Label(f_about, image=self.icon).grid(column=0, rowspan=2, padx=(15, 0))
+        l_title = Label(f_about, text="My Diary", font="Arial 12 bold", anchor="center")
+        l_title.grid(column=1, row=0, sticky="nsew")
 
         about_desc = f"""
         Author: {self.author}
-    
+        -----------
         Created as final project
         for CS50p Course.
         Year: 2023
-        
+        -----------
         Github: {self.github}
-    
-        Version: {self.version}
+        -----------
         """
 
-        l_about = Label(f_about, text=about_desc)
-        l_about.grid(column=0, row=1, sticky="nsew")
+        Label(f_about, text=about_desc, justify=LEFT).grid(column=1, row=1)
+        Label(f_about, text="Version " + self.version).grid(column=0, row=2, columnspan=2)
 
         # Force TopLevel to open in center of screen in relation to Tk object
         root.eval(f'tk::PlaceWindow {str(w_about)} center')
@@ -888,5 +924,5 @@ def createtooltip(widget, text):
     widget.bind('<Leave>', leave)
 
 
-def icon(icon_file):
-    return ImageTk.PhotoImage(Image.open(icon_file).resize((12, 12), Image.Resampling.LANCZOS))
+def icon(icon_file, x: int = 12, y: int = 12):
+    return ImageTk.PhotoImage(Image.open(icon_file).resize((x, y), Image.Resampling.LANCZOS))
