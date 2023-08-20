@@ -691,6 +691,7 @@ class User:
         acc = self.username
         text = entry_box.get("1.0", "end-1c")
         db = self.db
+
         acc_id = db.execute("SELECT id FROM accounts WHERE account = ?", (acc,)).fetchone()
         try:
             if index:
@@ -710,6 +711,21 @@ class User:
             self.clear_entry(entry_box)
 
     def __str__(self):
+        """Print User
+
+        Overwriting the '__str__' method to work as:
+            When requested to print a User object, this method is called, which
+            returns the id, the username, the first name and the last name of the
+            User.
+
+        Parameters:
+            This method takes no parameters.
+
+        Returns:
+            This method returns str values to be printed when requested.
+
+        :return:
+        """
         return [self.id, self.username, self.f_name, self.l_name]
 
 
