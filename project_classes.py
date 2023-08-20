@@ -783,15 +783,18 @@ class ToolTip(object):
         self.text = None
 
     def showtip(self, text):
-        # "Display text in tooltip window"
         self.text = text
         if self.tipwindow or not self.text:
             return
+
+        # Include variables to a group of widgets
         x, y, cx, cy = self.widget.bbox("insert")
+
+        # Position ToolTip
         x = x + self.widget.winfo_rootx() + 70
         y = y + cy + self.widget.winfo_rooty() + 27
         self.tipwindow = tw = Toplevel(self.widget)
-        tw.wm_overrideredirect(True)
+        tw.wm_overrideredirect(True)  # Remove title or borders
         tw.wm_geometry("+%d+%d" % (x, y))
         label = Label(tw, text=self.text, justify=LEFT,
                       background="#ffffe0", relief=SOLID, borderwidth=1,
