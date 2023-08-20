@@ -417,13 +417,29 @@ class User:
     def get_entries(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         """Populate listbox and entry box
 
+        Method used to retrieve selected date from Calendar, prompts DB for entries
+        from that user on that date and populates a listbox with indices containing
+        the entries text.
+        Whenever the user selects an index within the listbox, the text_box will be
+        populated with the text from that entry.
+
+        Paramenters:
+            cal: Calendar from which method will retrieve date from.
+            r_field: Label used to return the selected date to user.
+            lb: Listbox to be populated with indices.
+            text_box: scrolledtext Text box used to populate text from entry.
+
+        Returns:
+            This method does Not return Anything.
 
 
         """
+
         # Variable assignment for readability
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")
 
+        # List of entries
         entries_list = self.fill_list(lb, selected_date)
 
         def selected(event):
