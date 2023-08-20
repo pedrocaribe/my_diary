@@ -276,6 +276,7 @@ class User:
         Returns:
             This method does Not return anything.
         """
+
         box.delete("1.0", END)
 
     def change_info(self, command: str):
