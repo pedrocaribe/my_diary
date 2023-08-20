@@ -794,6 +794,7 @@ class ToolTip(object):
         Returns:
             This method does Not return anything.
         """
+
         self.text = text
         if self.tipwindow or not self.text:
             return
@@ -813,6 +814,18 @@ class ToolTip(object):
         label.pack(ipadx=1)
 
     def hidetip(self):
+        """Hide tip
+
+        Method used to hide (destroy) the tip previously created whenever the
+        mouse is located outside the specified widget.
+
+        Parameters:
+            This method does Not have any parameters.
+
+        Returns:
+            This method does Not return anything.
+        """
+
         tw = self.tipwindow
         self.tipwindow = None
         if tw:
