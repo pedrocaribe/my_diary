@@ -399,8 +399,11 @@ class User:
         else:
             db.commit()
 
-    # Method to populate listbox and entry box
     def get_entries(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
+        """Populate listbox and entry box
+
+
+        """
         # Variable assignment for readability
         selected_date = cal.get_date()
         r_field.config(text=f"Selected Date is: {selected_date}")

@@ -62,7 +62,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
     Validates login information provided by user.
     Provides feedback to user if account doesn't match DB.
 
-    Args:
+    Parameters:
         w_tl: A TopLevel window in which user typed information.
         acc: A string containing the account name provided by user.
         passwd: A string containing password provided by user.
@@ -126,7 +126,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
 def create_login(db, l_back_window: Label, b_reg: ttk.Button):
     """Create login if user not found in DB.
 
-    Args:
+    Parameters:
         db: Database in which user will be registered.
         l_back_window: Label to give a registration feedback to user
         b_reg: Button to disable onde registration is complete
@@ -172,8 +172,8 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
         if user provided is existent or not and if all fields were
         entered by user.
 
-        Args:
-            This function takes no arguments.
+        Parameters:
+            This function takes no parameters.
 
         Returns:
             This function does Not return anything.
