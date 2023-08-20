@@ -672,6 +672,22 @@ class User:
         return entries_list
 
     def save_entry(self, entry_box: Text, index=None):
+        """ Save Entry to DB.
+
+        Method used to save entries to DB, saving a new entry when index is
+        Not provided, or saving over the previous existent entry, if index was
+        provided.
+
+        Parameters:
+            entry_box: scrolledtext Text box from which to retrieve the text.
+            index: [optional] decided wether to save new entry or over existent
+                entry.
+
+        Returns:
+            This method does Not return anything.
+        """
+
+        # Variable assignment for easier understanding
         acc = self.username
         text = entry_box.get("1.0", "end-1c")
         db = self.db
