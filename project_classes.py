@@ -723,9 +723,8 @@ class User:
 
         Returns:
             This method returns str values to be printed when requested.
-
-        :return:
         """
+
         return [self.id, self.username, self.f_name, self.l_name]
 
 
