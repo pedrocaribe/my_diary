@@ -1,10 +1,8 @@
+import sqlite3
+
+from cryptography.fernet import Fernet
 from tkinter import *
 from tkinter import ttk
-import sqlite3
-from cryptography.fernet import Fernet
-from PIL import Image, ImageTk
-
-
 from project_classes import User
 
 
