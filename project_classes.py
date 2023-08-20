@@ -382,17 +382,23 @@ class User:
 
     # Garbage collector, to delete any empty entries from DB
     def garbage_collector(self):
-        """Garbage collector on DB
+        """Garbage collector on DB.
 
         Method used to delete any empty entries from DB, which may include only:
-            - "\n" -> New lines
-            - "\r" -> Escape characters
-            - "\t" -> Tab characters
-            - " "  -> Space characters
+            - "\n" -> New lines;
+            - "\r" -> Escape characters.\;
+            - "\t" -> Tab characters;
+            - " "  -> Space characters;
 
         Sqlite3 supports REGEXP but does not have it included in its package.
         In order to use it, you have to use parametrized SQL.
         Docs for Reference: https://www.sqlite.org/c3ref/create_function.html
+
+        Parameters:
+            This method takes no parameters.
+
+        Returns:
+            This method does Not return anything.
         """
 
         def regexp(expr, item):
@@ -410,6 +416,7 @@ class User:
 
     def get_entries(self, cal: Calendar, r_field: Label, lb: Listbox, text_box: Text):
         """Populate listbox and entry box
+
 
 
         """
