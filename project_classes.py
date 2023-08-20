@@ -36,7 +36,7 @@ class User:
     def __init__(self, root: Tk, user):
         """Initializes the user based on successful login.
 
-        Args:
+        Parameters:
             root: Root Tk window in which to display the main window frame.
             user: username provided by user after successfully logging in.
         """
@@ -60,8 +60,11 @@ class User:
 
         Window used to display all Widgets after successfully logging in.
 
+        Parameters:
+            This function takes no parameters.
+
         Returns:
-             This method does Not return anything.
+            This function does Not return anything.
         """
 
         # Force main window to open in center of screen
@@ -251,7 +254,7 @@ class User:
         Method used to clear the actual entry within the scrolledtext Text box,
         without maintaining the index of the actual entry.
 
-        Args:
+        Parameters:
             text_box: Text box used to create the new entry.
 
         Returns:
@@ -272,7 +275,7 @@ class User:
         maintaining the entry's index, and giving the user the option to save a
         new value to this entry.
 
-        Args:
+        Parameters:
             box: Text box in which text is being editted.
 
         Returns:
@@ -285,7 +288,7 @@ class User:
 
         Method used to change user info such as password and e-mail registered in DB.
 
-        Args:
+        Parameters:
             command: Command to differentiate method functionality.
 
         Returns:
@@ -329,6 +332,12 @@ class User:
 
                 Nested function to act when event is sent from change_info method, from
                 submit button
+
+                Parameters:
+                    This function takes no parameters.
+
+                Returns:
+                    This function does Not return anything.
                 """
                 o_pass = curr_pass.get()  # Old password
                 n_pass = new_pass.get()  # New password
