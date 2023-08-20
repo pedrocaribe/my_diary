@@ -839,21 +839,23 @@ def about(root: Tk):
     f_about = ttk.Frame(w_about, padding=(3, 3, 12, 12))
     f_about.grid(column=0, row=0, sticky="nsew")
 
-    l_title = Label(f_about, text="My Diary", font="Arial 12 bold", anchor="center")
-    l_title.grid(column=0, row=0, sticky="nsew")
+    l_title = Label(f_about, text="My Diary", font="Arial 12 bold", justify=LEFT)
+    l_title.grid(column=0, row=0)
     about_desc = """
     Author: Pedro Caribé
 
     Created as final project
     for CS50p Course.
     Year: 2023
+    
+    Github: 
 
     Version: 1.00
     """
     l_about = Label(f_about, text=about_desc)
     l_about.grid(column=0, row=1, sticky="nsew")
 
-    # Force TopLevel to open in center of screen
+    # Force TopLevel to open in center of screen in relation to Tk object
     root.eval(f'tk::PlaceWindow {str(w_about)} center')
 
 
