@@ -386,7 +386,7 @@ class User:
 
         Method used to delete any empty entries from DB, which may include only:
             - "\n" -> New lines;
-            - "\r" -> Escape characters.\;
+            - "\r" -> Escape characters;
             - "\t" -> Tab characters;
             - " "  -> Space characters;
 
