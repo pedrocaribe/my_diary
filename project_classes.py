@@ -435,6 +435,8 @@ class User:
 
         # Variable assignment for readability
         selected_date = cal.get_date()
+
+        # Once date selected, return to user
         r_field.config(text=f"Selected Date is: {selected_date}")
 
         # List of entries
