@@ -731,14 +731,15 @@ class User:
 class Entries:
     """Entries class
 
-        Entries class to be initialized when an entry is retrieved from DB.
+    Entries class to be initialized when an entry is retrieved from DB.
 
-        Attributes:
-            count_id: Index on list.
-            entry_id: Index on DB.
-            entry: A string containing the entry's content.
-            date: A string containing the entry's date.
-        """
+    Attributes:
+        count_id: Index on list.
+        entry_id: Index on DB.
+        entry: A string containing the entry's content.
+        date: A string containing the entry's date.
+    """
+
     def __init__(self, n: int, e_id: int, e: str, d: str):
         """Initializes the user based on successful login.
 
@@ -748,20 +749,36 @@ class Entries:
                     e: A String containing the entry's content.
                     d: A String containing the entry's date.
         """
+
         self.count_id = n  # Index on list
         self.entry_id = e_id  # Index on DB
         self.entry = e  # Entry's content
         self.date = d  # Entry's date
 
 
-# Display-message-when-hovering-over-something-with-mouse-cursor-in-python
-#   Source: https://stackoverflow.com/questions/20399243/
 class ToolTip(object):
+    """Display hover message
+
+    Display message when hovering over some widget with mouse cursor.
+    Source: https://stackoverflow.com/questions/20399243/
+
+    Attributes:
+        widget: Widget to apply the display message to.
+        tipwindow: TopLevel widget to work as a tip widget.
+        x: X cursor position
+        y: Y cursor position
+        text: Text to be used within the Widget.
+    """
 
     def __init__(self, widget):
+        """Initializes the ToolTip object.
+
+        Parameters:
+            widget: Widget to apply the ToolTip on.
+        """
+
         self.widget = widget
         self.tipwindow = None
-        self.id = None
         self.x = self.y = 0
         self.text = None
 
