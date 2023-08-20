@@ -945,6 +945,19 @@ def motivate():
 
 # Function to create tooltips whenever hovering over widgets
 def createtooltip(widget, text):
+    """Create tooltips
+
+    Fuction used to create tooltips whenever hovering over widgets by instantiating
+    a ToolTip object and binding events to the widgets.
+
+    Parameters:
+        widget: The widget on which to add the ToolTip.
+        text: Text to be used within the ToolTip label.
+
+    Returns:
+        This function does Not return anything.
+    """
+
     tooltip = ToolTip(widget)
 
     def enter(event):
@@ -958,4 +971,17 @@ def createtooltip(widget, text):
 
 
 def icon(icon_file, x: int = 12, y: int = 12):
+    """Create icons for menus
+
+    Function used to create icons to be used throughout the menus of this application.
+
+    Parameters:
+        icon_file: File from which to retrieve the image.
+        x: [OPTIONAL] X size to resize image.
+        y: [OPTIONAL] Y size to resize image.
+
+    Returns:
+        This function returns a PhotoImage object, resized and with antialiasing applied.
+    """
+
     return ImageTk.PhotoImage(Image.open(icon_file).resize((x, y), Image.Resampling.LANCZOS))
