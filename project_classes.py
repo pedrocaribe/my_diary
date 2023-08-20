@@ -499,9 +499,16 @@ class User:
 
         Returns:
             This method does Not return anything.
+
+        Raises:
+            ValueError: If invalid command
         """
 
         class PDF(FPDF):
+            """Parametrize PDF
+
+            Changing PDF parameters by overwriting a few methods from FPDF.
+            """
             def header(self):
                 # Setting font: helvetica bold 15
                 self.set_font("helvetica", "B", 15)
@@ -557,6 +564,7 @@ class User:
         output_name = f"exported_diary_{text_date}.pdf"
 
         if command == "save":
+            # Check if there is text to be printed
             if len(text) > 1:
                 try:
                     pdf.output(
@@ -568,8 +576,10 @@ class User:
                             defaultextension=".pdf"
                         )
                     )
+                # Catch exceptions
                 except Exception as e:
                     messagebox.showerror("Error", str(e))
+            # If no text, abort save
             else:
                 messagebox.showinfo("Info", "There is nothing to be saved")
 
@@ -606,14 +616,17 @@ class User:
                 messagebox.showinfo("Info", "There's nothing to be printed")
 
         elif command == "email":
-            # Added re.sub to convert \n to a %0D%0A to conform wth Mailto URI Scheme
-            # https://www.rfc-editor.org/rfc/rfc6068#section-5
-            body = (f"My Diary - {text_date}\n\n"
-                    f"-------------------\n\n"
-                    f"{text}")
-            body = re.sub("\n", "%0D%0A", body)
-            webbrowser.open(f"mailto:?subject=My Diary - {text_date}&body={body}")
-
+            # Check if there is text to be printed
+            if len(text) > 1:
+                # Added re.sub to convert \n to a %0D%0A to conform wth Mailto URI Scheme
+                # Source: https://www.rfc-editor.org/rfc/rfc6068#section-5
+                body = (f"My Diary - {text_date}\n\n"
+                        f"-------------------\n\n"
+                        f"{text}")
+                body = re.sub("\n", "%0D%0A", body)
+                webbrowser.open(f"mailto:?subject=My Diary - {text_date}&body={body}")
+            else:
+                messagebox.showinfo("Info", "There's nothing to be emailed")
         else:
             raise ValueError("Invalid Command")
 
