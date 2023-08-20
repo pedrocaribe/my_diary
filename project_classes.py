@@ -443,6 +443,17 @@ class User:
         entries_list = self.fill_list(lb, selected_date)
 
         def selected(event):
+            """Populate list and text box
+
+            Nested function to act when event is sent from get_entries method, from
+            select index event
+
+            Parameters:
+                This function takes no evident parameters.
+
+            Returns:
+                This function does Not return anything.
+            """
 
             sel_index = lb.curselection()[0]  # User selected entry's index
             sel_entry = next(_ for _ in entries_list if _.count_id == sel_index)
