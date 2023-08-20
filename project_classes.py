@@ -431,8 +431,6 @@ class User:
 
         Returns:
             This method does Not return Anything.
-
-
         """
 
         # Variable assignment for readability
