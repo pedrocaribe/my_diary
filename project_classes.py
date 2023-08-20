@@ -487,6 +487,19 @@ class User:
         lb.bind('<<ListboxSelect>>', selected)
 
     def print_pdf(self, command: str, entry: Text, cal: Calendar):
+        """Print, Saves, E-mails entry.
+
+        Method used to print, save to pdf with specific name formatting, or e-mails
+        currently being edited entry with specified subject and to-be-chosen e-mail adress.
+
+        Parameters:
+            command: Command to differentiate method functionality.
+            entry: Current text being edited within scrolledtext Text box.
+            cal: Calendar from which to retrieve the entry's date from
+
+        Returns:
+            This method does Not return anything.
+        """
 
         class PDF(FPDF):
             def header(self):
