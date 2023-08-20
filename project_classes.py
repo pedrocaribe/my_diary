@@ -631,6 +631,17 @@ class User:
             raise ValueError("Invalid Command")
 
     def fill_list(self, lb: Listbox, selected_date):
+        """Fill listbox and return
+
+        Method used to fill ListBox with entries from DB.
+
+        Parameters:
+            lb = ListBox to be filled.
+            selected_date = Date selected on calendar.
+
+        Returns:
+            This method returns a List containing all entries from date provided.
+        """
 
         # Variable assignement for easier referencing
         acc = self.username
@@ -657,6 +668,7 @@ class User:
             if entry_temp.entry != "":
                 lb.insert(entry_temp.count_id, entry_temp.entry)
 
+        # Return List of entries
         return entries_list
 
     def save_entry(self, entry_box: Text, index=None):
