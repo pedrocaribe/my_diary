@@ -423,7 +423,7 @@ class User:
         Whenever the user selects an index within the listbox, the text_box will be
         populated with the text from that entry.
 
-        Paramenters:
+        Parameters:
             cal: Calendar from which method will retrieve date from.
             r_field: Label used to return the selected date to user.
             lb: Listbox to be populated with indices.
