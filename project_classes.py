@@ -96,6 +96,9 @@ class User:
                    "entry TEXT, "
                    "date DATE);")
 
+        # Initialize About object, containing information
+        about = About()
+
         # Create Window Menu
         menubar = Menu(root)
         root.config(menu=menubar)
@@ -118,14 +121,6 @@ class User:
         m_help = Menu(menubar, tearoff=0)
         m_contact = Menu(tearoff=0)  # No parent/master
 
-        # Add properties to store fixed values
-        email = "pho.caribe@gmail.com"
-        linkedin = "https://www.linkedin.com/in/pedro-caribe/"
-
-        # Icon for m_contact definitions
-        m_contact.email_icon = icon("icon_email_contact.png")
-        m_contact.linkedin_icon = icon("icon_linkedin.png")
-
         menubar.add_cascade(label="Help", menu=m_help, underline=0)
 
         # Add submenus
@@ -133,16 +128,16 @@ class User:
         m_contact.add_command(
             label="E-mail",
             command=lambda: webbrowser.open(
-                                    f"mailto:?to={email}&subject=Feedback on My Diary", new=1),
-            image=m_contact.email_icon, compound="left"
+                                    f"mailto:?to={about.email}", new=1),
+            image=about.email_icon, compound="left"
         )
         m_contact.add_command(
             label="LinkedIn",
-            command=lambda: webbrowser.open(linkedin),
-            image=m_contact.linkedin_icon, compound="left"
+            command=lambda: webbrowser.open(about.linkedin),
+            image=about.linkedin_icon, compound="left"
         )
 
-        m_help.add_command(label="About", command=lambda: about(root))
+        m_help.add_command(label="About", command=lambda: about.window(root))
 
         # Create main window frame
         f_main = ttk.Frame(root, padding=(3, 3, 12, 12), borderwidth=2)
@@ -832,31 +827,46 @@ class ToolTip(object):
             tw.destroy()
 
 
-def about(root: Tk):
-    w_about = Toplevel()
-    w_about.resizable(False, False)
-    w_about.title("About My Diary")
-    f_about = ttk.Frame(w_about, padding=(3, 3, 12, 12))
-    f_about.grid(column=0, row=0, sticky="nsew")
+class About:
+    def __init__(self):
+        # Add properties to store fixed values
+        self.email = "pho.caribe@gmail.com"
+        self.linkedin = "https://www.linkedin.com/in/pedro-caribe/"
+        self.author = "Pedro Caribé"
+        self.github = "https://github.com/pedrocaribe"
+        self.version = "1.00"
 
-    l_title = Label(f_about, text="My Diary", font="Arial 12 bold", justify=LEFT)
-    l_title.grid(column=0, row=0)
-    about_desc = """
-    Author: Pedro Caribé
+        # Icon for m_contact definitions
+        self.email_icon = icon("icon_email_contact.png")
+        self.linkedin_icon = icon("icon_linkedin.png")
 
-    Created as final project
-    for CS50p Course.
-    Year: 2023
+    def window(self, root: Tk):
+        w_about = Toplevel()
+        w_about.resizable(False, False)
+        w_about.title("About My Diary")
+        f_about = ttk.Frame(w_about, padding=(3, 3, 12, 12))
+        f_about.grid(column=0, row=0, sticky="nsew")
+
+        l_title = Label(f_about, text="My Diary", font="Arial 12 bold", justify=LEFT)
+        l_title.grid(column=0, row=0)
+
+        about_desc = f"""
+        Author: {self.author}
     
-    Github: 
+        Created as final project
+        for CS50p Course.
+        Year: 2023
+        
+        Github: {self.github}
+    
+        Version: {self.version}
+        """
 
-    Version: 1.00
-    """
-    l_about = Label(f_about, text=about_desc)
-    l_about.grid(column=0, row=1, sticky="nsew")
+        l_about = Label(f_about, text=about_desc)
+        l_about.grid(column=0, row=1, sticky="nsew")
 
-    # Force TopLevel to open in center of screen in relation to Tk object
-    root.eval(f'tk::PlaceWindow {str(w_about)} center')
+        # Force TopLevel to open in center of screen in relation to Tk object
+        root.eval(f'tk::PlaceWindow {str(w_about)} center')
 
 
 def motivate():
