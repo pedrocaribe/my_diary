@@ -765,11 +765,10 @@ class Entries:
             This method returns str values to be printed when requested.
         """
 
-        return f"""Index on list = {self.count_id}
-        Index on DB = {self.entry_id}
-        Entry's first chars = {self.entry[:10]}
-        Entry's date = {self.date}
-                """
+        return (f"Index on list = {self.count_id}\n"
+                f"Index on DB = {self.entry_id}\n"
+                f"Entry's first chars = {self.entry[:10]}\n"
+                f"Entry's date = {self.date}")
 
 
 class ToolTip(object):
