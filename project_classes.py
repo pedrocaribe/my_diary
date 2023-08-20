@@ -751,6 +751,26 @@ class Entries:
         self.entry = e  # Entry's content
         self.date = d  # Entry's date
 
+    def __str__(self):
+        """Print Entry
+
+        Overwriting the '__str__' method to work as:
+            When requested to print an Entry object, this method is called, which
+            returns all information from that entry.
+
+        Parameters:
+            This method takes no parameters.
+
+        Returns:
+            This method returns str values to be printed when requested.
+        """
+
+        return f"""Index on list = {self.count_id}
+        Index on DB = {self.entry_id}
+        Entry's first chars = {self.entry[:10]}
+        Entry's date = {self.date}
+                """
+
 
 class ToolTip(object):
     """Display hover message
