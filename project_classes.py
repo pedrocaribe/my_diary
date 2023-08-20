@@ -729,7 +729,25 @@ class User:
 
 
 class Entries:
+    """Entries class
+
+        Entries class to be initialized when an entry is retrieved from DB.
+
+        Attributes:
+            count_id: Index on list.
+            entry_id: Index on DB.
+            entry: A string containing the entry's content.
+            date: A string containing the entry's date.
+        """
     def __init__(self, n: int, e_id: int, e: str, d: str):
+        """Initializes the user based on successful login.
+
+                Parameters:
+                    n: An Integer representing the index on list.
+                    e_id: An Integer representing the index on the DB.
+                    e: A String containing the entry's content.
+                    d: A String containing the entry's date.
+        """
         self.count_id = n  # Index on list
         self.entry_id = e_id  # Index on DB
         self.entry = e  # Entry's content
