@@ -7,6 +7,13 @@ from tkinter import *
 from tkinter import ttk
 
 
+def test_main():
+    root_window = Tk()
+    main(root_window)
+
+    assert isinstance(root_window.winfo_children()[0], Toplevel)
+
+
 def test_setup_login_window():
     root_window = Tk()
     w_pass = Toplevel(root_window)
