@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import ttk
 
 
+# Assert that components in main window are correctly set up
 def test_main():
     root_window = Tk()
     main(root_window)
@@ -19,7 +20,7 @@ def test_setup_login_window():
     w_pass = Toplevel(root_window)
     setup_login_window(w_pass, root_window)
 
-    # Assert that components of the login window are correctly set up
+    # Assert that components in login window are correctly set up
     assert isinstance(w_pass, Toplevel)
     assert isinstance(w_pass.winfo_children()[0], ttk.Frame)
 

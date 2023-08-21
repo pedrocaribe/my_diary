@@ -4,8 +4,6 @@ from cryptography.fernet import Fernet
 from tkinter import *
 from tkinter import ttk
 from project_classes import User
-from PIL import Image, ImageTk
-from time import sleep
 
 
 def main(root):
@@ -69,7 +67,10 @@ def setup_login_window(w_pass: Toplevel, w_root: Tk):
     ttk.Entry(f_pass, textvariable=pw_str, show='*').grid(column=1, row=3, columnspan=2, sticky="nsew")
 
     # Submit and cancel buttons
-    b_submit = ttk.Button(f_pass, text="Submit", command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, w_root))
+    b_submit = ttk.Button(f_pass,
+                          text="Submit",
+                          command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, w_root)
+                          )
     b_submit.grid(column=1, row=4, pady=(10, 0))
 
     b_close = ttk.Button(f_pass, text="Close", command=w_root.destroy)
