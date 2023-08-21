@@ -20,8 +20,9 @@ def main(root):
 
     root.withdraw()  # Hide main window until user is authenticated
 
-    # Create new toplevel window for authentication process
+    # Create new toplevel window for authentication process in center of screen
     w_pass = Toplevel()
+    root.eval(f'tk::PlaceWindow {str(w_pass)} center')
     # Initiate authentication process
     setup_login_window(w_pass, root)
 
