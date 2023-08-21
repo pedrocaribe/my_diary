@@ -15,13 +15,31 @@ def main(root):
 
     Typical usage example:
 
-    python3 diary.py
+    python3 project.py
     """
 
     root.withdraw()  # Hide main window until user is authenticated
 
     # Create new toplevel window for authentication process
     w_pass = Toplevel()
+    # Initiate authentication process
+    setup_login_window(w_pass, root)
+
+
+def setup_login_window(w_pass: Toplevel, w_root: Tk):
+    """Setup User Login window
+
+    This function sets up a login window, in which user can insert a username
+    along with a registered password.
+    It then triggers validate_login function to perform checks.
+
+    Parameters:
+        w_pass: A Toplevel window in which to build the login widgets.
+        w_root: A Tk object which will be shown after authentication.
+
+    Returns:
+        This function does Not return anything.
+    """
 
     w_pass.resizable(False, False)
     w_pass.title("My Diary - Login")
@@ -47,10 +65,10 @@ def main(root):
     ttk.Entry(f_pass, textvariable=pw_str, show='*').grid(column=1, row=3, columnspan=2, sticky="nsew")
 
     # Submit and cancel buttons
-    b_submit = ttk.Button(f_pass, text="Submit", command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, root))
+    b_submit = ttk.Button(f_pass, text="Submit", command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, w_root))
     b_submit.grid(column=1, row=4, pady=(10, 0))
 
-    b_close = ttk.Button(f_pass, text="Close", command=root.destroy)
+    b_close = ttk.Button(f_pass, text="Close", command=w_root.destroy)
     b_close.grid(column=2, row=4, pady=(10, 0))
 
 
@@ -90,7 +108,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
 
     # Create return label for posterior checks
     l_return = ttk.Label(parent, text="", anchor="center")
-    l_return.grid(column=0, row=4, columnspan=4, sticky="nsew")
+    l_return.grid(column=0, row=5, columnspan=4, sticky="nsew")
 
     # Login Checks
     if not acc:
@@ -98,7 +116,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
     elif not check:
         l_return.configure(text="Invalid account, please register")  # If account not registered in DB
         b_register = ttk.Button(parent, text="Register", command=lambda: create_login(db, l_return, b_register))
-        b_register.grid(column=0, row=3, pady=(10, 0))
+        b_register.grid(column=0, row=4, pady=(10, 0))
 
     # If account was found in DB, decrypt password provided with stored hash key and confirm login information
     else:
