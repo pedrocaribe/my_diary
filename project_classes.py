@@ -33,6 +33,7 @@ class User:
         current_selection_id: An integer representing old the entry's id to
          be compared with actual entry's id when changed
     """
+
     def __init__(self, root: Tk, user):
         """Initializes the user based on successful login.
 
@@ -40,6 +41,7 @@ class User:
             root: Root Tk window in which to display the main window frame.
             user: username provided by user after successfully logging in.
         """
+
         self.db = sqlite3.connect("diary.db")
         db_id, username, first_name, last_name, hashed_pass, key = self.db.execute("SELECT * "
                                                                                    "FROM accounts "
