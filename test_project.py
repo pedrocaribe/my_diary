@@ -27,7 +27,7 @@ def test_validate_login():
 
     print(w_tl.winfo_children())
     # Call the function and assert that it doesn't return anything
-    # assert validate_login(w_tl, acc, passwd, parent, root_window) is None
+    assert validate_login(w_tl, acc, passwd, parent, root_window) is None
 
 
 def test_create_login():
