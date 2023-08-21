@@ -929,16 +929,6 @@ class About:
         root.eval(f'tk::PlaceWindow {str(w_about)} center')
 
 
-class Loading(Toplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.geometry("654x332")
-        self.resizable(False, False)
-        self.overrideredirect(True)
-        self.logo = ImageTk.PhotoImage(Image.open("logo_loading.png"))
-
-
 def motivate():
     """Motivate phrase
 
