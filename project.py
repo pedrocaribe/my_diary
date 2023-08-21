@@ -4,6 +4,8 @@ from cryptography.fernet import Fernet
 from tkinter import *
 from tkinter import ttk
 from project_classes import User
+from PIL import Image, ImageTk
+from time import sleep
 
 
 def main(root):
