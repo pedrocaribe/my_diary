@@ -337,6 +337,7 @@ class User:
                 Returns:
                     This function does Not return anything.
                 """
+
                 o_pass = curr_pass.get()  # Old password
                 n_pass = new_pass.get()  # New password
                 c_pass = conf_pass.get()  # Confirmation password
@@ -507,6 +508,7 @@ class User:
 
             Changing PDF parameters by overwriting a few methods from FPDF.
             """
+
             def header(self):
                 # Setting font: helvetica bold 15
                 self.set_font("helvetica", "B", 15)
@@ -893,7 +895,7 @@ class About:
         to show to user.
 
         Parameters:
-            root: Root tk window in which to display the about window frame.
+            root: Root tk window in which to display the About window frame.
 
         Returns:
             This method does Not return anything.
