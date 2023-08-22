@@ -3,7 +3,8 @@ import sqlite3
 from cryptography.fernet import Fernet
 from tkinter import *
 from tkinter import ttk
-from project_classes import User
+from project_classes import User, Loading
+from time import sleep
 
 
 def main(root):
@@ -20,15 +21,24 @@ def main(root):
 
     root.withdraw()  # Hide main window until user is authenticated
 
+    setup_loading_window(root)
+
+
+def setup_loading_window(w_root: Tk):
+
+    w = Loading()
+    w_root.eval(f'tk::PlaceWindow {str(w)} center')
+    ttk.Label(w, image=w.logo).pack()
+
     # Create new toplevel window for authentication process in center of screen
     w_pass = Toplevel()
-    root.eval(f'tk::PlaceWindow {str(w_pass)} center')
+    w_root.eval(f'tk::PlaceWindow {str(w_pass)} center')
 
     # Initiate authentication process
-    setup_login_window(w_pass, root)
+    setup_login_window(w, w_pass, w_root)
 
 
-def setup_login_window(w_pass: Toplevel, w_root: Tk):
+def setup_login_window(w_logo: Loading, w_pass: Toplevel, w_root: Tk):
     """Setup User Login window
 
     This function sets up a login window, in which user can insert a username
@@ -69,7 +79,7 @@ def setup_login_window(w_pass: Toplevel, w_root: Tk):
     # Submit and cancel buttons
     b_submit = ttk.Button(f_pass,
                           text="Submit",
-                          command=lambda: validate_login(w_pass, acc_str, pw_str, f_pass, w_root)
+                          command=lambda: validate_login(w_logo, w_pass, acc_str, pw_str, f_pass, w_root)
                           )
     b_submit.grid(column=1, row=4, pady=(10, 0))
 
@@ -77,7 +87,7 @@ def setup_login_window(w_pass: Toplevel, w_root: Tk):
     b_close.grid(column=2, row=4, pady=(10, 0))
 
 
-def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Frame, w_root: Tk):
+def validate_login(w_logo: Loading, w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Frame, w_root: Tk):
     """Login Validation
 
     Validates login information provided by user.
@@ -135,6 +145,7 @@ def validate_login(w_tl: Toplevel, acc: StringVar, passwd: StringVar, parent: Fr
             l_return.configure(text="Login Successful")
 
             # If login successful, destroy toplevel window and show main
+            w_logo.destroy()
             w_tl.destroy()
             user = User(w_root, acc)
             user.garbage_collector()  # Run garbage collector to clean-up empty entries in DB
