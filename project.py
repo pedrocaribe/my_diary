@@ -46,6 +46,8 @@ def setup_login_window(w_logo: Loading, w_pass: Toplevel, w_root: Tk):
     It then triggers validate_login function to perform checks.
 
     Parameters:
+        w_logo: A Toplevel/Loading window to be in the background while logging
+            in.
         w_pass: A Toplevel window in which to build the login widgets.
         w_root: A Tk object which will be shown after authentication.
 
@@ -94,6 +96,8 @@ def validate_login(w_logo: Loading, w_tl: Toplevel, acc: StringVar, passwd: Stri
     Provides feedback to user if account doesn't match DB.
 
     Parameters:
+        w_logo: A Toplevel/Loading window to be in the background while logging
+            in, to be destroyed after successful login.
         w_tl: A TopLevel window in which user typed information.
         acc: A string containing the account name provided by user.
         passwd: A string containing password provided by user.
