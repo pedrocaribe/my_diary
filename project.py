@@ -235,43 +235,47 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
         passwd = pass_str.get()
         conf_passwd = pass_conf_str.get()
 
-        # Check if user provided already exists in DB
-        check = db.execute("SELECT * FROM accounts WHERE account = ?", [acc]).fetchone()
-
         # Create return label for posterior checks
         l_register = Label(parent, text="", anchor="center")
         l_register.grid(column=0, row=7, columnspan=4, sticky="nsew")
 
         # Diverse checks
-        if check:
-            l_register.configure(text="Account already exists")
-        elif not acc:
-            l_register.configure(text="Account cannot be blank")
-        elif not passwd:
-            l_register.configure(text="Password cannot be blank")
+        if not acc:
+            return l_register.configure(text="Account cannot be blank")
+        else:
+            # Check if user provided already exists in DB
+            check = db.execute("SELECT * FROM accounts WHERE account = ?", (acc,)).fetchone()
+            if check:
+                return l_register.configure(text="Account already exists")
 
-        if passwd != conf_passwd:
-            l_register.configure(text="Passwords do Not match")
+        if not passwd:
+            return l_register.configure(text="Password cannot be blank")
+        else:
+            if not conf_passwd:
+                return l_register.configure(text="Please confirm the password")
+            else:
+                if passwd != conf_passwd:
+                    return l_register.configure(text="Passwords do Not match")
 
         # If all checks passed, register user after encrypting password, by committing to DB
-        else:
-            key = Fernet.generate_key()
-            fernet = Fernet(key)
-            hashed_pass = fernet.encrypt(passwd.encode())
-            db.execute("INSERT INTO accounts ("
-                       "account, "
-                       "first_name, "
-                       "last_name, "
-                       "hashed_password, "
-                       "key_verification) "
-                       "VALUES (?, ?, ?, ?, ?)", (acc, first, last, hashed_pass, key,))
 
-            db.commit()
+        key = Fernet.generate_key()
+        fernet = Fernet(key)
+        hashed_pass = fernet.encrypt(passwd.encode())
+        db.execute("INSERT INTO accounts ("
+                   "account, "
+                   "first_name, "
+                   "last_name, "
+                   "hashed_password, "
+                   "key_verification) "
+                   "VALUES (?, ?, ?, ?, ?)", (acc, first, last, hashed_pass, key,))
 
-            # Return to user and disable Register button in background window
-            l_back_window.configure(text="Registered Successfully")
-            b_reg.configure(state="disabled")
-            parent.destroy()
+        db.commit()
+
+        # Return to user and disable Register button in background window
+        l_back_window.configure(text="Registered Successfully")
+        b_reg.configure(state="disabled")
+        parent.destroy()
 
     # Submit and Cancel buttons
     ttk.Button(f_new, text="Register", command=register).grid(column=0, row=0, padx=5, pady=(10, 0))
