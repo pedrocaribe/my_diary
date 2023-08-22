@@ -25,6 +25,19 @@ def main(root):
 
 
 def setup_loading_window(w_root: Tk):
+    """Setup Loading Window
+
+    This function sets up a loading window to be placed in the background
+    of the login screen.
+    The window is aligned to top left corner on center of screen, which
+    enables a visual harmony.
+
+    Parameters:
+        w_root: Root tk window in which to display the loading window.
+
+    Returns:
+        This function does Not return anything.
+    """
 
     w = Loading()
     w_root.eval(f'tk::PlaceWindow {str(w)} center')
