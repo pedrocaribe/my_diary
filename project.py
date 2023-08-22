@@ -4,7 +4,6 @@ from cryptography.fernet import Fernet
 from tkinter import *
 from tkinter import ttk
 from project_classes import User, Loading
-from time import sleep
 
 
 def main(root):
@@ -224,7 +223,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
             This function takes no parameters.
 
         Returns:
-            This function returns strings whenever there's a missing information
+            This function returns strings whenever there's missing information
                 in registration fields
         """
 
