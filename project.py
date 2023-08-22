@@ -224,7 +224,8 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
             This function takes no parameters.
 
         Returns:
-            This function does Not return anything.
+            This function returns strings whenever there's a missing information
+                in registration fields
         """
 
         # Information fetching
