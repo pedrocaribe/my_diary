@@ -213,7 +213,6 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
     f_new = ttk.Frame(w_reg)
     f_new.grid(column=0, row=6, columnspan=3)
 
-    # Definition of function for registration process
     def register():
         """Register user to DB
 
@@ -237,7 +236,7 @@ def create_login(db, l_back_window: Label, b_reg: ttk.Button):
         conf_passwd = pass_conf_str.get()
 
         # Check if user provided already exists in DB
-        check = db.execute("SELECT * FROM accounts WHERE account = ?", (acc,)).fetchone()
+        check = db.execute("SELECT * FROM accounts WHERE account = ?", [acc]).fetchone()
 
         # Create return label for posterior checks
         l_register = Label(parent, text="", anchor="center")
