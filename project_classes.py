@@ -930,7 +930,25 @@ class About:
 
 
 class Loading(Toplevel):
+    """Loading Class
+
+    A Toplevel instantiated class to show app logo while logging in.
+
+    Attributes:
+        geometry: Fixed Geometry, to match the logo size.
+        resizable: Set to not be resizable.
+        overrideredirect: Overrides Windows Window Manager and disables top bar.
+        logo: Image containing app logo, stored in cache.
+    """
+
     def __init__(self, *args, **kwargs):
+        """Initializes the Loading object when opening the application.
+
+        Parameters:
+            args: [OPTIONAL] Args to be transfered to super.
+            kwargs: [OPTIONAL] Keyword Args to be transfered to super.
+        """
+
         super().__init__(*args, **kwargs)
 
         self.geometry("654x332")
