@@ -33,8 +33,11 @@ The **My Diary App** is a personal diary application built in Python using the T
    pip install -r requirements.txt
     ```
 
-3. Flowchart
-   ![Flowchart](https://tinyurl.com/flowchartmydiary)
+## Flowchart
+   ![Flowchart](Flowchart.png)
+
+   https://tinyurl.com/flowchartmydiary
+
 ## How to Use
 
 1. Run the `project.py` file to start the application:
