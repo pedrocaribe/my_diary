@@ -24,7 +24,7 @@ The **My Diary App** is a personal diary application built in Python using the T
 
 1. Clone this repository to your system:
     ```
-   git clone https://github.com/username/my-diary-app.git
+   git clone https://github.com/pedrocaribe/my_diary.git
    cd my-diary-app
     ```
 
