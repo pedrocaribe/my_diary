@@ -18,7 +18,7 @@ def main(root):
     python3 project.py
 
     Flowchart:
-        https://tinyurl.com/mydiaryflowchart
+        https://tinyurl.com/flowchartmydiary
     """
 
     root.withdraw()  # Hide main window until user is authenticated
