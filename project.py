@@ -16,6 +16,9 @@ def main(root):
     Typical usage example:
 
     python3 project.py
+
+    Flowchart:
+        https://tinyurl.com/mydiaryflowchart
     """
 
     root.withdraw()  # Hide main window until user is authenticated
