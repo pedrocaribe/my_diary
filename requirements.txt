@@ -1,0 +1,7 @@
+cryptography==41.0.3
+fpdf>=1.7.2
+fpdf2>=2.7.5
+Pillow>=9.5.0
+pywin32==306
+Requests==2.31.0
+tkcalendar==1.6.1

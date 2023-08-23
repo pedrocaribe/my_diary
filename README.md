@@ -2,21 +2,23 @@
 
 ![App Logo](logo_loading.png)
 
-The **My Diary App** is a personal diary application built in Python using the Tkinter library. The application allows users to create, edit, save, and print diary entries in text format. Additionally, the app offers security features such as user authentication and password encryption.
+The **My Diary App** is a personal diary application built in Python using the Tkinter (and others) library. The application allows users to create, edit, save, and print diary entries in text format. Additionally, the app offers security features such as user authentication and password encryption.
 
 ## Key Features
 
 - Creation and editing of diary entries.
 - Secure saving of diary entries.
-- Printing of diary entries in PDF format.
+- Printing and external saving of diary entries in PDF format.
 - Entry protection with user authentication.
+- DB implementation.
+- Fernet encryption.
 - User password change functionality.
-- Automatic removal of empty entries.
+- Automatic removal of empty entries (garbage collection).
 
 ## Requirements
 
 - Python 3.x
-- Libraries: Tkinter, Pillow, FPDF, re, sqlite3, os, requests, json, win32api, win32print
+- Libraries: Tkinter, Pillow, FPDF, re, sqlite3, os, requests, json, win32api, win32print, cryptography, tkcalendar, datetime, webbrowser
 
 ## Installation
 
