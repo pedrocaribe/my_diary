@@ -2,6 +2,7 @@
 import os.path
 
 from project import main, setup_login_window, validate_login, create_login
+from project_classes import Loading
 import sqlite3
 from tkinter import *
 from tkinter import ttk
@@ -18,7 +19,8 @@ def test_main():
 def test_setup_login_window():
     root_window = Tk()
     w_pass = Toplevel(root_window)
-    setup_login_window(w_pass, root_window)
+    w = Loading()
+    setup_login_window(w, w_pass, root_window)
 
     # Assert that components in login window are correctly set up
     assert isinstance(w_pass, Toplevel)
@@ -32,10 +34,11 @@ def test_validate_login():
     acc = StringVar(value="test_account")
     passwd = StringVar(value="test_password")
     parent = ttk.Frame(w_tl)
+    w = Loading()
 
     print(w_tl.winfo_children())
     # Call the function and assert that it doesn't return anything
-    assert validate_login(w_tl, acc, passwd, parent, root_window) is None
+    assert validate_login(w, w_tl, acc, passwd, parent, root_window) is None
 
 
 def test_create_login():
