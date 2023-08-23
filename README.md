@@ -47,9 +47,11 @@ The **My Diary App** is a personal diary application built in Python using the T
 ## Screenshots
 
 ![Login Screen](screenshots/login.png)
+
 *Login Screen*
 
 ![Main Screen](screenshots/main_screen.png)
+
 *Main Diary Screen*
 
 ## Author
