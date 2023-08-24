@@ -49,6 +49,10 @@ The **My Diary App** is a personal diary application built in Python using the T
 
 3. In the main diary screen, you can create, edit, save, print, and manage your diary entries.
 
+[![Demo Youtube Video](screenshots/myGif.gif)
+
+Video Demo: https://youtu.be/eQTRq-gAalE
+
 ## Screenshots
 
 ![Login Screen](screenshots/login.png)
