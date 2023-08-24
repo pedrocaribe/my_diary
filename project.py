@@ -19,6 +19,9 @@ def main(root):
 
     Flowchart:
         https://tinyurl.com/flowchartmydiary
+
+    Demo video:
+        https://youtu.be/eQTRq-gAalE
     """
 
     root.withdraw()  # Hide main window until user is authenticated
